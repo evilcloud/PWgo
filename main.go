@@ -20,14 +20,13 @@ var (
 type item = menuet.MenuItem
 
 func main() {
-
 	app := menuet.App()
 	app.SetMenuState(&menuet.MenuState{
 		Title: "Password",
 	})
 	app.Children = menuItems
 	app.Name = "PWgo"
-	app.Label = "com.github.evilcloud.pwgo"
+	app.Label = "com.github.evilcloud.PWgo"
 	app.RunApplication()
 }
 
@@ -42,13 +41,15 @@ func menuItems() []item {
 	return []item{
 		item{Text: "Username"},
 		item{Text: username,
+			FontWeight: menuet.WeightMedium,
 			Clicked: func() {
 				clipboard.WriteAll(username)
 			}},
 		spacer,
 		item{Text: "Password"},
 		item{
-			Text: password,
+			Text:       password,
+			FontWeight: menuet.WeightMedium,
 			Clicked: func() {
 				clipboard.WriteAll(password)
 			},
@@ -83,11 +84,3 @@ func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().Unix())
 	return strings.Title(data[rand.Intn(len(data))])
 }
-
-// func getIcon(path string) []byte {
-// 	icon, err := ioutil.ReadFile(path)
-// 	if err != nil {
-// 		log.Fatal("Icon not found")
-// 	}
-// 	return icon
-// }
