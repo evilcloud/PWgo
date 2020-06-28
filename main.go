@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -27,15 +28,17 @@ func main() {
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
+	app.AutoUpdate.Version = "v0.1"
+	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
 
 func menuItems() []item {
-if adjectives {
-fmt.Println("ok")
-}
-	adjectives = openFile("resources/adjectives.txt")
-	nouns = openFile("resources/nouns.txt")
+	if len(adjectives) < 1 {
+		adjectives = openFile("Resources/adjectives.txt")
+		nouns = openFile("Resources/nouns.txt")
+		fmt.Println("ok")
+	}
 
 	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
 	password := generatePass(12, adjectives)
