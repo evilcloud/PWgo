@@ -31,6 +31,9 @@ func main() {
 }
 
 func menuItems() []item {
+if adjectives {
+fmt.Println("ok")
+}
 	adjectives = openFile("resources/adjectives.txt")
 	nouns = openFile("resources/nouns.txt")
 
