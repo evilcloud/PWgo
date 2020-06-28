@@ -20,54 +20,53 @@ var (
 	nsfwDict      bool
 	sailorRedneck bool
 	loadDict      bool
+	sailorState   bool
+	passLenght    int
 )
 
 type item = menuet.MenuItem
 
 func menuItems() []item {
+	// var passLenght int
 	if len(adjectives) < 1 {
 		adjectives = openFile("Resources/adjectives.txt")
 		nouns = openFile("Resources/nouns.txt")
 		fmt.Println("initial")
+		passLenght := 40
+		fmt.Println(passLenght)
+
 	}
 
 	if !loadDict && sfwDict {
 		loadDict = true
-		bad := openFile("Resources/bad.txt")
-		adjectives = append(openFile("Resources/adjectives.txt"), bad...)
-		nouns = append(openFile("Resources/nouns.txt"), bad...)
+		adjectives = openFile("Resources/adjectives.txt")
+		nouns = openFile("Resources/nouns.txt")
 		fmt.Println("SFW")
 	}
 
 	if !loadDict && nsfwDict {
 		loadDict = true
-		sfwDict = false
-		sailorRedneck = false
-		adjectives = openFile("Resources/adjectives.txt")
-		// adjectives = append(adjectives, openFile("Resources/bad.txt"))
-		nouns = openFile("Resources/nouns.txt")
-		// nouns = append(nouns, openFile("Resources/bad.txt"))
-		fmt.Println("NSFW")
+		bad := openFile("Resources/bad.txt")
+		if sailorRedneck {
+			adjectives = bad
+			nouns = bad
+			fmt.Println("Hello, sailor!")
+		} else {
+			adjectives = append(openFile("Resources/adjectives.txt"), bad...)
+			nouns = append(openFile("Resources/nouns.txt"), bad...)
+			fmt.Println("NSFW")
+		}
 	}
-
-	if !loadDict && sailorRedneck {
-		loadDict = true
-		sfwDict = false
-		nsfwDict = false
-		adjectives = openFile("Resources/bad.txt")
-		nouns = adjectives
-		fmt.Println("Hello sailor!")
-	}
-
-	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
-	password := generatePass(12, adjectives)
+	passData := append(adjectives, nouns...)
+	username := strings.Title(pickRandomWord(passData)) + strings.Title(pickRandomWord(nouns))
+	password := generatePass(passLenght, passData)
 	spacer := item{}
 
 	return []item{
-		item{Text: "Username",
-			State: true},
+		item{Text: "Username"},
 		item{Text: username,
 			FontWeight: menuet.WeightMedium,
+			FontSize:   16,
 			Clicked: func() {
 				clipboard.WriteAll(username)
 			}},
@@ -82,31 +81,111 @@ func menuItems() []item {
 		spacer,
 		spacer,
 		item{
-			Text: "Sailor-redneck mode",
-			Clicked: func() {
-				loadDict = false
-				if sailorRedneck {
-					sailorRedneck = false
-				} else {
-					sailorRedneck = true
+			Text: "Settings",
+			Children: func() []menuet.MenuItem {
+				return []menuet.MenuItem{
+					{Text: "Lenght"},
+					{
+						Text: "10",
+						Clicked: func() {
+							passLenght := 10
+							fmt.Println(passLenght)
+						},
+					}, {
+						Text: "20",
+						Clicked: func() {
+							passLenght := 20
+							fmt.Println(passLenght)
+
+						},
+					},
+					{
+						Text: "30",
+						Clicked: func() {
+							passLenght := 30
+							fmt.Println(passLenght)
+
+						},
+					},
+					{
+						Text: "40",
+						Clicked: func() {
+							passLenght := 40
+							fmt.Println(passLenght)
+
+						},
+					},
+					spacer,
+					{Text: "NSFW",
+						Clicked: func() {
+							loadDict = false
+							if nsfwDict {
+								nsfwDict = false
+								sailorState = false
+								sfwDict = true
+							} else {
+								nsfwDict = true
+								sfwDict = false
+								sailorState = true
+							}
+						},
+						State: nsfwDict},
+					{
+						Text: "Sailor-redneck mode",
+					},
 				}
 			},
-			State: sailorRedneck,
+			// 	Children: func() []menuet.MenuItem {
+			// 		return []menuet.MenuItem{
+			// 			Text: "10",
+			// 			Clicked: func() {
+			// 				lenght := 10
+			// 			},
+			// 			State: true,
+			// 		},
+			// 	}
 		},
-		item{
-			Text: "NSFW",
-			Clicked: func() {
-				loadDict = false
-				if nsfwDict {
-					nsfwDict = false
-				} else {
-					nsfwDict = true
-				}
-			},
-			State: nsfwDict,
-		},
+		// item{
+		// 	Text: "NSFW",
+		// 	Clicked: func() {
+		// 		loadDict = false
+		// 		if nsfwDict {
+		// 			nsfwDict = false
+		// 			sailorState = false
+		// 			sfwDict = true
+		// 		} else {
+		// 			nsfwDict = true
+		// 			sfwDict = false
+		// 			sailorState = true
+		// 		}
+		// 	},
+		// 	State: nsfwDict,
+		// },
+		// item{
+		// 	Text: "Sailor-redneck mode",
+		// },
 	}
 }
+
+// item{
+// 	Text: "Sailor-redneck mode",
+// 	if sailorState{
+// 		Clicked: func() {
+// 			loadDict = false
+// 			if sailorRedneck {
+// 				sailorRedneck = false
+// 			} else {
+// 				sailorRedneck = true
+// 			}
+// 		}
+// 	},
+// State: sailorState,
+// }
+
+// func passLenght() []menuet.MenuItem {
+// 	return []menuet.MenuItem{
+// 		Text: "10"}
+// }
 
 func openFile(fileName string) []string {
 	if _, err := os.Stat(fileName); err != nil {
@@ -123,16 +202,36 @@ func openFile(fileName string) []string {
 	return strings.Split(string(fileContent), "\n")
 }
 
-func generatePass(lenght int, adjectives []string) string {
-	password := pickRandomWord(adjectives)
-	password += pickRandomWord(nouns)
-	password += pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
-	password += pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
-	return password
+func generatePass(passLenght int, data []string) string {
+	fmt.Println(passLenght)
+	var generatedPass string = ""
+	var i int
+	// var pLeng int = passLenght - 2
+	// var attempts int = 0
+	// for attempts < 1000000 {
+	// 	if len(generagedPass) > pLeng {
+	// 		generagedPass = ""
+	// 	}
+	// 	if len(generagedPass) < pLeng {
+	// 		generagedPass = generagedPass + pickRandomWord(data)
+	// 	}
+	// 	if len(generagedPass) == pLeng {
+	// 		break
+	// 	}
+	// 	attempts += 1
+	// }
+	for i > 7 {
+		generatedPass += pickRandomWord(data)
+		fmt.Println(len(data))
+	}
+	generatedPass += pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
+	generatedPass += pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
+	fmt.Println(generatedPass)
+	return generatedPass
 }
 
 func pickRandomWord(data []string) string {
-	rand.Seed(time.Now().Unix())
+	rand.Seed(time.Now().UnixNano())
 	return strings.Title(data[rand.Intn(len(data))])
 }
 
