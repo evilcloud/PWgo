@@ -22,7 +22,7 @@ type item = menuet.MenuItem
 func main() {
 	app := menuet.App()
 	app.SetMenuState(&menuet.MenuState{
-		Title: "Password",
+		Title: "PWgo",
 	})
 	app.Children = menuItems
 	app.Name = "PWgo"
