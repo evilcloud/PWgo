@@ -14,30 +14,49 @@ import (
 )
 
 var (
-	adjectives []string
-	nouns      []string
+	adjectives    []string
+	nouns         []string
+	sfwDict       bool
+	nsfwDict      bool
+	sailorRedneck bool
+	loadDict      bool
 )
 
 type item = menuet.MenuItem
-
-func main() {
-	app := menuet.App()
-	app.SetMenuState(&menuet.MenuState{
-		Title: "PWgo",
-	})
-	app.Children = menuItems
-	app.Name = "PWgo"
-	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.1"
-	app.AutoUpdate.Repo = "evilcloud/PWgo"
-	app.RunApplication()
-}
 
 func menuItems() []item {
 	if len(adjectives) < 1 {
 		adjectives = openFile("Resources/adjectives.txt")
 		nouns = openFile("Resources/nouns.txt")
-		fmt.Println("ok")
+		fmt.Println("initial")
+	}
+
+	if !loadDict && sfwDict {
+		loadDict = true
+		bad := openFile("Resources/bad.txt")
+		adjectives = append(openFile("Resources/adjectives.txt"), bad...)
+		nouns = append(openFile("Resources/nouns.txt"), bad...)
+		fmt.Println("SFW")
+	}
+
+	if !loadDict && nsfwDict {
+		loadDict = true
+		sfwDict = false
+		sailorRedneck = false
+		adjectives = openFile("Resources/adjectives.txt")
+		// adjectives = append(adjectives, openFile("Resources/bad.txt"))
+		nouns = openFile("Resources/nouns.txt")
+		// nouns = append(nouns, openFile("Resources/bad.txt"))
+		fmt.Println("NSFW")
+	}
+
+	if !loadDict && sailorRedneck {
+		loadDict = true
+		sfwDict = false
+		nsfwDict = false
+		adjectives = openFile("Resources/bad.txt")
+		nouns = adjectives
+		fmt.Println("Hello sailor!")
 	}
 
 	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
@@ -45,13 +64,13 @@ func menuItems() []item {
 	spacer := item{}
 
 	return []item{
-		item{Text: "Username"},
+		item{Text: "Username",
+			State: true},
 		item{Text: username,
 			FontWeight: menuet.WeightMedium,
 			Clicked: func() {
 				clipboard.WriteAll(username)
 			}},
-		spacer,
 		item{Text: "Password"},
 		item{
 			Text:       password,
@@ -59,6 +78,32 @@ func menuItems() []item {
 			Clicked: func() {
 				clipboard.WriteAll(password)
 			},
+		},
+		spacer,
+		spacer,
+		item{
+			Text: "Sailor-redneck mode",
+			Clicked: func() {
+				loadDict = false
+				if sailorRedneck {
+					sailorRedneck = false
+				} else {
+					sailorRedneck = true
+				}
+			},
+			State: sailorRedneck,
+		},
+		item{
+			Text: "NSFW",
+			Clicked: func() {
+				loadDict = false
+				if nsfwDict {
+					nsfwDict = false
+				} else {
+					nsfwDict = true
+				}
+			},
+			State: nsfwDict,
 		},
 	}
 }
@@ -89,4 +134,18 @@ func generatePass(lenght int, adjectives []string) string {
 func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().Unix())
 	return strings.Title(data[rand.Intn(len(data))])
+}
+
+func main() {
+	app := menuet.App()
+	app.SetMenuState(&menuet.MenuState{
+		Title: "PWgo",
+		// Image: "22",
+	})
+	app.Children = menuItems
+	app.Name = "PWgo"
+	app.Label = "com.github.evilcloud.PWgo"
+	app.AutoUpdate.Version = "v0.1"
+	app.AutoUpdate.Repo = "evilcloud/PWgo"
+	app.RunApplication()
 }
