@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"path/filepath"
+	"path"
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
@@ -27,9 +29,9 @@ var (
 type item = menuet.MenuItem
 
 func menuItems() []item {
-	const adjFile = "Resources/adjectives.txt"
-	const nounFile = "Resources/nouns.txt"
-	const badFile = "Resources/bad.txt"
+	const adjFile = "data/adjectives.txt"
+	const nounFile = "data/nouns.txt"
+	const badFile = "data/bad.txt"
 	const m1 = 4
 	const m2 = 5
 	const m3 = 6
@@ -64,7 +66,10 @@ func menuItems() []item {
 
 	passData := append(adjectives, nouns...)
 	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
+// TODO: remove hyphens
 	password := generatePass(passData)
+// TODO: add proper adjectives and nouns to sailor password
+	clipboard.WriteAll(password)
 	spacer := item{}
 
 	sailorItem := item{Text: "Sailor-redneck mode (only in NSFW mode)"}
@@ -168,20 +173,35 @@ func menuItems() []item {
 }
 
 func openFile(fileName string) []string {
-	if _, err := os.Stat(fileName); err != nil {
-		if os.IsNotExist(err) {
-			log.Fatal("File does not exist")
-		} else {
-			log.Fatal(err)
-		}
-	}
-	fileContent, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	ex, err := os.Executable()
+	isError(err)
+	exPath := filepath.Dir(ex)
+	fullPath := path.Join(exPath, fileName)
+
+	// if _, err := os.Stat(fileName); err != nil {
+	// 	if os.IsNotExist(err) {
+	// 		log.Fatal("File does not exist")
+	// 	} else {
+	// 		log.Println(err)
+	// 		// log.Fatal(err)
+	// 	}
+	// }
+
+	// pwd, err := os.Getwd()
+	// isError(err)
+	// fullPath := path.Join(pwd, fileName)
+
+	fileContent, err := ioutil.ReadFile(fullPath)
+	isError(err)
 	return strings.Split(string(fileContent), "\n")
 }
 
+func isError(err error) {
+	if err != nil {
+		log.Println(err)
+	}
+	
+}
 func generatePass(passData []string) string {
 	var generatedPass string = ""
 
@@ -225,13 +245,13 @@ func main() {
 	// log.SetOutput(ioutil.Discard)
 	app := menuet.App()
 	app.SetMenuState(&menuet.MenuState{
-		Title: "PWgo",
-		// Image: "22.pdf",
+		// Title: "PWgo",
+		Image: "pw.pdf",
 	})
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.1"
-	app.AutoUpdate.Repo = "evilcloud/PWgo"
+	// app.AutoUpdate.Version = "v0.1"
+	// app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
