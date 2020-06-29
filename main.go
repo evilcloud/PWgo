@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -20,52 +20,68 @@ var (
 	nsfwDict      bool
 	sailorRedneck bool
 	loadDict      bool
+	nsRandomPlace bool
 	passLenght    int
 )
 
 type item = menuet.MenuItem
 
 func menuItems() []item {
-	adjFile := "Resources/adjectives.txt"
-	nounFile := "Resources/nouns.txt"
-	badFile := "Resources/bad.txt"
+	const adjFile = "Resources/adjectives.txt"
+	const nounFile = "Resources/nouns.txt"
+	const badFile = "Resources/bad.txt"
+	const m1 = 4
+	const m2 = 5
+	const m3 = 6
+	const m4 = 8
+
 	if len(adjectives) < 1 {
 		adjectives = openFile(adjFile)
 		nouns = openFile(nounFile)
-		fmt.Println("initial")
-		passLenght := 40
-		fmt.Println(passLenght)
-
+		log.Println("initial")
 	}
 
 	if !loadDict && sfwDict {
 		loadDict = true
 		adjectives = openFile(adjFile)
 		nouns = openFile(nounFile)
-		fmt.Println("SFW")
+		log.Println("SFW")
 	}
 
 	if !loadDict && nsfwDict {
 		loadDict = true
 		bad := openFile(badFile)
-		adjectives = append(openFile(adjFile), bad...)
-		nouns = append(openFile(nounFile), bad...)
-		fmt.Println("NSFW")
-	}
-
-	if sailorRedneck && !loadDict {
-		loadDict = true
-		bad := openFile(badFile)
-		adjectives = bad
-		nouns = bad
-		fmt.Println("Hello, sailor!")
+		if sailorRedneck {
+			adjectives = bad
+			nouns = bad
+			log.Println("Hello, sailor!")
+		} else {
+			adjectives = append(openFile(adjFile), bad...)
+			nouns = append(openFile(nounFile), bad...)
+			log.Println("NSFW")
+		}
 	}
 
 	passData := append(adjectives, nouns...)
 	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
-	fmt.Println(len(adjectives), len(nouns), len(passData))
-	password := generatePass(passLenght, passData)
+	password := generatePass(passData)
 	spacer := item{}
+
+	sailorItem := item{Text: "Sailor-redneck mode (only in NSFW mode)"}
+	if nsfwDict {
+		sailorItem = item{Text: "Sailor-redneck mode",
+			Clicked: func() {
+				loadDict = false
+				if sailorRedneck {
+					sailorRedneck = false
+					nsfwDict = true
+				} else {
+					sailorRedneck = true
+				}
+			},
+			State: sailorRedneck,
+		}
+	}
 
 	return []item{
 		item{Text: "Username"},
@@ -91,37 +107,46 @@ func menuItems() []item {
 				return []menuet.MenuItem{
 					{Text: "Length (words)"},
 					{
-						Text: "4",
+						Text: strconv.Itoa(m1),
 						Clicked: func() {
-							passLenght := 4
-							fmt.Println(passLenght)
+							passLenght = m1
 						},
+						State: passLenght == m1,
 					}, {
-						Text: "5",
+						Text: strconv.Itoa(m2),
 						Clicked: func() {
-							passLenght := 5
-							fmt.Println(passLenght)
-
+							passLenght = m2
 						},
+						State: passLenght == m2,
 					},
 					{
-						Text: "6",
+						Text: strconv.Itoa(m3),
 						Clicked: func() {
-							passLenght := 6
-							fmt.Println(passLenght)
-
+							passLenght = m3
 						},
+						State: passLenght == m3,
 					},
 					{
-						Text: "7",
+						Text: strconv.Itoa(m4),
 						Clicked: func() {
-							passLenght := 7
-							fmt.Println(passLenght)
-
+							passLenght = m4
 						},
+						State: passLenght == m4,
 					},
 					spacer,
-					{Text: "NSFW",
+					{Text: "Additional security"},
+					{Text: "Number and special char randomly placed",
+						Clicked: func() {
+							if nsRandomPlace {
+								nsRandomPlace = false
+							} else {
+								nsRandomPlace = true
+							}
+						},
+						State: nsRandomPlace},
+					spacer,
+					{
+						Text: "NSFW",
 						Clicked: func() {
 							loadDict = false
 							if nsfwDict {
@@ -135,20 +160,7 @@ func menuItems() []item {
 							}
 						},
 						State: nsfwDict},
-					{
-						Text: "Sailor-redneck mode",
-						Clicked: func() {
-							loadDict = false
-							if sailorRedneck {
-								sailorRedneck = false
-								nsfwDict = true
-							} else {
-								sailorRedneck = true
-								nsfwDict = false
-							}
-						},
-						State: sailorRedneck,
-					},
+					sailorItem,
 				}
 			},
 		},
@@ -170,20 +182,38 @@ func openFile(fileName string) []string {
 	return strings.Split(string(fileContent), "\n")
 }
 
-func generatePass(passLenght int, passData []string) string {
-	fmt.Println(len(passData))
+func generatePass(passData []string) string {
 	var generatedPass string = ""
-	// for i > passLenght {
-	generatedPass += pickRandomWord(passData)
-	generatedPass += pickRandomWord(passData)
-	generatedPass += pickRandomWord(passData)
-	generatedPass += pickRandomWord(passData)
-	generatedPass += pickRandomWord(passData)
-	// }
-	generatedPass += pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
-	generatedPass += pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
-	fmt.Println(generatedPass)
+
+	if passLenght < 4 {
+		passLenght = 6
+	}
+
+	numberPosition := passLenght
+	charPosition := passLenght
+
+	number := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
+	specialChar := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
+	if nsRandomPlace {
+		numberPosition = pickNumberRange(passLenght)
+		charPosition = pickNumberRange(passLenght)
+	}
+
+	for i := 1; i < passLenght+1; i++ {
+		generatedPass += pickRandomWord(passData)
+		if i == numberPosition {
+			generatedPass += number
+		}
+		if i == charPosition {
+			generatedPass += specialChar
+		}
+	}
 	return generatedPass
+}
+
+func pickNumberRange(num int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(num)
 }
 
 func pickRandomWord(data []string) string {
@@ -192,10 +222,11 @@ func pickRandomWord(data []string) string {
 }
 
 func main() {
+	// log.SetOutput(ioutil.Discard)
 	app := menuet.App()
 	app.SetMenuState(&menuet.MenuState{
 		Title: "PWgo",
-		// Image: "22",
+		// Image: "22.pdf",
 	})
 	app.Children = menuItems
 	app.Name = "PWgo"
