@@ -56,6 +56,7 @@ func menuItems() []item {
 		if sailorRedneck {
 			adjectives = bad
 			nouns = bad
+			
 			log.Println("Hello, sailor!")
 		} else {
 			adjectives = append(openFile(adjFile), bad...)
@@ -82,6 +83,10 @@ func menuItems() []item {
 					nsfwDict = true
 				} else {
 					sailorRedneck = true
+					menuet.App().Notification(menuet.Notification{
+						Title: "Hello, sailor!",
+						Message: "This is a novelty setting, which is less secure than all other options. Use at your own risk, kiddo.",
+					})
 				}
 			},
 			State: sailorRedneck,
@@ -251,7 +256,7 @@ func main() {
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
-	// app.AutoUpdate.Version = "v0.1"
-	// app.AutoUpdate.Repo = "evilcloud/PWgo"
+	app.AutoUpdate.Version = "v0.1"
+	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
