@@ -10,6 +10,7 @@ import (
 	"time"
 	"path/filepath"
 	"path"
+	"regexp"
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
@@ -66,8 +67,10 @@ func menuItems() []item {
 	}
 
 	passData := append(adjectives, nouns...)
-	username := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
-// TODO: remove hyphens
+	usernameUncleaned := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
+	reg, err := regexp.Compile("[^a-zA-Z]+")
+	isError(err)
+	username := reg.ReplaceAllString(usernameUncleaned, "")
 	password := generatePass(passData)
 // TODO: add proper adjectives and nouns to sailor password
 	clipboard.WriteAll(password)
