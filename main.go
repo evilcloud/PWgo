@@ -5,16 +5,18 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path"
+	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"path/filepath"
-	"path"
-	"regexp"
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
 )
+
+// FIX: sort out the scopes -- too many globals?
 
 var (
 	adjectives    []string
@@ -38,31 +40,27 @@ func menuItems() []item {
 	const m3 = 6
 	const m4 = 8
 
-	if len(adjectives) < 1 {
+	switch !loadDict {
+	case len(adjectives) < 1:
 		adjectives = openFile(adjFile)
 		nouns = openFile(nounFile)
-		log.Println("initial")
-	}
-
-	if !loadDict && sfwDict {
+		log.Println("initial dictionary load")
+	case sfwDict:
 		loadDict = true
 		adjectives = openFile(adjFile)
 		nouns = openFile(nounFile)
-		log.Println("SFW")
-	}
-
-	if !loadDict && nsfwDict {
+		log.Print("SFW")
+	case nsfwDict:
 		loadDict = true
 		bad := openFile(badFile)
 		if sailorRedneck {
 			adjectives = bad
-			nouns = bad
-			
+			nouns = adjectives
 			log.Println("Hello, sailor!")
 		} else {
 			adjectives = append(openFile(adjFile), bad...)
 			nouns = append(openFile(nounFile), bad...)
-			log.Println("NSFW")
+			log.Print("NSFW")
 		}
 	}
 
@@ -71,8 +69,11 @@ func menuItems() []item {
 	reg, err := regexp.Compile("[^a-zA-Z]+")
 	isError(err)
 	username := reg.ReplaceAllString(usernameUncleaned, "")
+	if len(passData) == 2 {
+		username = "⚠️ NO DICTIONARY FOUND"
+	}
 	password := generatePass(passData)
-// TODO: add proper adjectives and nouns to sailor password
+	// FIXED: add proper adjectives and nouns to sailor password -- NO. Let these juvies suffer from inferior protection
 	clipboard.WriteAll(password)
 	spacer := item{}
 
@@ -87,8 +88,8 @@ func menuItems() []item {
 				} else {
 					sailorRedneck = true
 					menuet.App().Notification(menuet.Notification{
-						Title: "Hello, sailor!",
-						Message: "This is a novelty setting, which is less secure than all other options. Use at your own risk, kiddo.",
+						Title:   "A less secure novelty setting.",
+						Message: "Also using it will make you look like a juvenile asshole.Use at your own risk, kiddo.",
 					})
 				}
 			},
@@ -186,19 +187,6 @@ func openFile(fileName string) []string {
 	exPath := filepath.Dir(ex)
 	fullPath := path.Join(exPath, fileName)
 
-	// if _, err := os.Stat(fileName); err != nil {
-	// 	if os.IsNotExist(err) {
-	// 		log.Fatal("File does not exist")
-	// 	} else {
-	// 		log.Println(err)
-	// 		// log.Fatal(err)
-	// 	}
-	// }
-
-	// pwd, err := os.Getwd()
-	// isError(err)
-	// fullPath := path.Join(pwd, fileName)
-
 	fileContent, err := ioutil.ReadFile(fullPath)
 	isError(err)
 	return strings.Split(string(fileContent), "\n")
@@ -206,13 +194,23 @@ func openFile(fileName string) []string {
 
 func isError(err error) {
 	if err != nil {
-		log.Println(err)
+		menuet.App().Notification(menuet.Notification{
+			Title:        "Error!",
+			Message:      err.Error(),
+			ActionButton: "Quit app",
+			CloseButton:  "Close notification",
+		})
 	}
-	
+	log.Println(err)
 }
-func generatePass(passData []string) string {
-	var generatedPass string = ""
 
+func generatePass(passData []string) string {
+	// ISSUE: why is empty passData array's length is 2?
+	if len(passData) == 2 {
+		return ""
+	}
+
+	var generatedPass string = ""
 	if passLenght < 4 {
 		passLenght = 6
 	}
@@ -250,8 +248,9 @@ func pickRandomWord(data []string) string {
 }
 
 func main() {
-	// log.SetOutput(ioutil.Discard)
+	log.SetOutput(ioutil.Discard)
 	app := menuet.App()
+
 	app.SetMenuState(&menuet.MenuState{
 		// Title: "PWgo",
 		Image: "pw.pdf",
