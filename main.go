@@ -18,6 +18,28 @@ import (
 
 // FIX: sort out the scopes -- too many globals?
 
+func main() {
+	debugMode := false
+
+	app := menuet.App()
+
+	if debugMode {
+		log.Println("Debugging mode ON")
+		app.SetMenuState(&menuet.MenuState{Title: "PWgo"})
+	} else {
+		log.SetOutput(ioutil.Discard)
+		app.SetMenuState(&menuet.MenuState{Image: "pw.pdf"})
+
+	}
+
+	app.Children = menuItems
+	app.Name = "PWgo"
+	app.Label = "com.github.evilcloud.PWgo"
+	app.AutoUpdate.Version = "v0.2"
+	app.AutoUpdate.Repo = "evilcloud/PWgo"
+	app.RunApplication()
+}
+
 var (
 	adjectives      []string
 	nouns           []string
@@ -42,27 +64,33 @@ func menuItems() []item {
 	const m3 = 6
 	const m4 = 8
 
-	switch !loadDict {
-	case len(adjectives) < 1:
-		adjectives = openFile(adjFile)
-		nouns = openFile(nounFile)
-		log.Println("initial dictionary load")
-	case sfwDict:
+	// BUG: NSFW works only once
+	if loadDict == false {
 		loadDict = true
-		adjectives = openFile(adjFile)
-		nouns = openFile(nounFile)
-		log.Print("SFW")
-	case nsfwDict:
-		loadDict = true
-		bad := openFile(badFile)
-		if sailorRedneck {
-			adjectives = bad
-			nouns = adjectives
-			log.Println("Hello, sailor!")
-		} else {
-			adjectives = append(openFile(adjFile), bad...)
-			nouns = append(openFile(nounFile), bad...)
-			log.Print("NSFW")
+		switch {
+		case len(adjectives) < 1:
+			loadDict = true
+			adjectives = openFile(adjFile)
+			nouns = openFile(nounFile)
+			log.Println("initial dictionary load")
+		case sfwDict:
+			loadDict = true
+			adjectives = openFile(adjFile)
+			nouns = openFile(nounFile)
+			log.Print("SFW")
+		case nsfwDict:
+			bad := openFile(badFile)
+			if sailorRedneck {
+				loadDict = true
+				adjectives = bad
+				nouns = adjectives
+				log.Println("Hello, sailor!")
+			} else {
+				loadDict = true
+				adjectives = append(openFile(adjFile), bad...)
+				nouns = append(openFile(nounFile), bad...)
+				log.Print("NSFW")
+			}
 		}
 	}
 
@@ -220,6 +248,7 @@ func openFile(fileName string) []string {
 
 func isError(err error) {
 	if err != nil {
+		log.Println(err)
 		menuet.App().Notification(menuet.Notification{
 			Title:        "Error!",
 			Message:      err.Error(),
@@ -227,10 +256,10 @@ func isError(err error) {
 			CloseButton:  "Close notification",
 		})
 	}
-	log.Println(err)
 }
 
 func generatePass(passData []string) string {
+
 	// ISSUE: why is empty passData array's length is 2?
 	if len(passData) == 2 {
 		return ""
@@ -271,20 +300,4 @@ func pickNumberRange(num int) int {
 func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().UnixNano())
 	return strings.Title(data[rand.Intn(len(data))])
-}
-
-func main() {
-	log.SetOutput(ioutil.Discard)
-	app := menuet.App()
-
-	app.SetMenuState(&menuet.MenuState{
-		// Title: "PWgo",
-		Image: "pw.pdf",
-	})
-	app.Children = menuItems
-	app.Name = "PWgo"
-	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.2"
-	app.AutoUpdate.Repo = "evilcloud/PWgo"
-	app.RunApplication()
 }
