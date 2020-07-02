@@ -19,14 +19,16 @@ import (
 // FIX: sort out the scopes -- too many globals?
 
 var (
-	adjectives    []string
-	nouns         []string
-	sfwDict       bool
-	nsfwDict      bool
-	sailorRedneck bool
-	loadDict      bool
-	nsRandomPlace bool
-	passLenght    int
+	adjectives      []string
+	nouns           []string
+	sfwDict         bool
+	nsfwDict        bool
+	sailorRedneck   bool
+	loadDict        bool
+	nsRandomPlace   bool
+	passLenght      int
+	clickedUsername string
+	clickedPassword string
 )
 
 type item = menuet.MenuItem
@@ -104,6 +106,7 @@ func menuItems() []item {
 			FontSize:   16,
 			Clicked: func() {
 				clipboard.WriteAll(username)
+				clickedUsername = username
 			}},
 		item{Text: "Password"},
 		item{
@@ -111,9 +114,32 @@ func menuItems() []item {
 			FontWeight: menuet.WeightMedium,
 			Clicked: func() {
 				clipboard.WriteAll(password)
+				clickedPassword = password
 			},
 		},
 		spacer,
+		item{
+			Text: "Last copy-clicked",
+			Children: func() []menuet.MenuItem {
+				return []menuet.MenuItem{
+					item{Text: "Username"},
+					item{Text: clickedUsername,
+						FontWeight: menuet.WeightMedium,
+						FontSize:   14,
+						Clicked: func() {
+							clipboard.WriteAll(clickedUsername)
+						}},
+					spacer,
+					item{Text: "Password"},
+					item{Text: clickedPassword,
+						FontWeight: menuet.WeightMedium,
+						FontSize:   14,
+						Clicked: func() {
+							clipboard.WriteAll(clickedPassword)
+						}},
+				}
+			},
+		},
 		spacer,
 		item{
 			Text: "Settings",
@@ -258,7 +284,7 @@ func main() {
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.1"
+	app.AutoUpdate.Version = "v0.2"
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
