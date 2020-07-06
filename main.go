@@ -30,67 +30,14 @@ func debugNotification(text string) {
 func main() {
 	// debugMode := false
 
-	setMenuState()
+	setMenuState("sfw")
 	app := menuet.App()
-
-	// if debugMode {
-	// 	log.Println("Debugging mode ON")
-	// 	app.SetMenuState(&menuet.MenuState{Title: "PWgo"})
-	// } else {
-	// 	log.SetOutput(ioutil.Discard)
-	// 	if nsfwDict && !sailorRedneck {
-	// 		image = "nsfw.pdf"
-	// 		debugNotification("nsfw")
-	// 		// app.SetMenuState(&menuet.MenuState{Image: "nsfw.pdf"})
-	// 	} else {
-	// 		SetMenuState()
-	// 	}
-	// if sailorRedneck {
-	// 	image = "sailor.pdf"
-	// 	debugNotification("sailor")
-	// } else {
-	// 	image = "pw.pdf"
-	// 	debugNotification("sfw")
-	// }
-	// app.SetMenuState(&menuet.MenuState{Image: image})
-	// }
-
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
 	app.AutoUpdate.Version = "v0.2"
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
-}
-
-// func SetMenuState() {
-// 	if nsfwDict && !sailorRedneck {
-// 		image = "nsfw.pdf"
-// 		debugNotification("nsfw")
-// 		// app.SetMenuState(&menuet.MenuState{Image: "nsfw.pdf"})
-// 	} else if sailorRedneck {
-// 		image = "sailor.pdf"
-// 		debugNotification("sailor")
-// 	} else {
-// 		image = "pw.pdf"
-// 		debugNotification("sfw")
-// 	}
-// 	menuet.App().SetMenuState(&menuet.MenuState{Image: image})
-// 	menuet.App().MenuChanged()
-// }
-
-func setMenuState() {
-	image := "pw.pdf"
-	// if sailorRedneck() {
-	// 	image = "sailor.pdf"
-	// }
-	if nsfwDict {
-		image = "nsfw.pdf"
-	}
-	menuet.App().SetMenuState(&menuet.MenuState{
-		Image: image,
-	})
-	menuet.App().MenuChanged()
 }
 
 var (
@@ -104,7 +51,6 @@ var (
 	passLenght      int
 	clickedUsername string
 	clickedPassword string
-	image           string
 )
 
 const (
@@ -188,6 +134,22 @@ func menuItems() []item {
 	}
 }
 
+func setMenuState(swearState string) {
+	var image string
+	switch swearState {
+	case "nsfw":
+		image = "nsfw.pdf"
+	case "sailor":
+		image = "sailor.pdf"
+	default:
+		image = "pw.pdf"
+	}
+	menuet.App().SetMenuState(&menuet.MenuState{
+		Image: image,
+	})
+	menuet.App().MenuChanged()
+}
+
 // menu items
 func sailorItem() menuet.MenuItem {
 	sailorItem := item{Text: "Sailor-redneck mode (only in NSFW mode)"}
@@ -198,13 +160,10 @@ func sailorItem() menuet.MenuItem {
 				if sailorRedneck {
 					sailorRedneck = false
 					nsfwDict = true
-					setMenuState()
+					setMenuState("nsfw")
 				} else {
 					sailorRedneck = true
-					menuet.App().SetMenuState(&menuet.MenuState{
-						Image: "sailor.pdf",
-					})
-					menuet.App().MenuChanged()
+					setMenuState("sailor")
 					menuet.App().Notification(menuet.Notification{
 						Title:   "A less secure novelty setting.",
 						Message: "Also using it will make you look like a juvenile asshole. Use at your own risk.",
@@ -226,15 +185,12 @@ func nsfwItem() menuet.MenuItem {
 				nsfwDict = false
 				sailorRedneck = false
 				sfwDict = true
-				setMenuState()
+				setMenuState("sfw")
 			} else {
 				nsfwDict = true
 				sfwDict = false
 				sailorRedneck = false
-				menuet.App().SetMenuState(&menuet.MenuState{
-					Image: "nsfw.pdf",
-				})
-				menuet.App().MenuChanged()
+				setMenuState("nsfw")
 			}
 		},
 		State: nsfwDict}
