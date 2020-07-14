@@ -138,7 +138,7 @@ func menuItems() []item {
 		submenuLastItemClicked(),
 		spacer,
 		item{
-			Text: "Worlds of Wisdom"},
+			Text: "Words of Wisdom"},
 		wordsOfWisdom(),
 		spacer,
 		item{
@@ -407,6 +407,14 @@ func generateUsernamePass() (string, string) {
 }
 
 func humaniseDuration(start time.Time) string {
+	// TODO: humanise more
+	// less than a minute ago
+	// couple of minutes ago
+	// half hour ago
+	// around an hour ago
+	// some hours ago
+	// yesterday
+	// long time ago
 	end := time.Now()
 	diff := end.Sub(start)
 	var empty time.Time
