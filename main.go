@@ -21,11 +21,11 @@ import (
 // TODO: Externalise all strings
 
 func debugNotification(text string) {
-	log.Println(text)
-	menuet.App().Notification(menuet.Notification{
-		Title:   "Debug notification",
-		Message: text,
-	})
+	// log.Println(text)
+	// menuet.App().Notification(menuet.Notification{
+	// 	Title:   "Debug notification",
+	// 	Message: text,
+	// })
 }
 
 type credentials struct {
