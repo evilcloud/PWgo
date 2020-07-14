@@ -21,37 +21,44 @@ import (
 // TODO: Externalise all strings
 
 func debugNotification(text string) {
+	log.Println(text)
 	menuet.App().Notification(menuet.Notification{
 		Title:   "Debug notification",
 		Message: text,
 	})
 }
 
-func main() {
-	// debugMode := false
+type credentials struct {
+	Username string
+	Password string
+	uname    struct {
+		value string
+		time  time.Time
+	}
+	pass struct {
+		value string
+		time  time.Time
+	}
 
-	setMenuState("sfw")
-	app := menuet.App()
-	app.Children = menuItems
-	app.Name = "PWgo"
-	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.2"
-	app.AutoUpdate.Repo = "evilcloud/PWgo"
-	app.RunApplication()
+	time struct {
+		last time.Time
+	}
 }
 
-var (
-	adjectives      []string
-	nouns           []string
-	sfwDict         bool
-	nsfwDict        bool
-	sailorRedneck   bool
-	loadDict        bool
-	nsRandomPlace   bool
-	passLenght      int
-	clickedUsername string
-	clickedPassword string
-)
+type settings struct {
+	PassLenght    int
+	Profanity     string
+	RandomPlacing bool
+}
+
+func (obj *settings) Info() {
+	if obj.PassLenght == 0 {
+		obj.PassLenght = 6
+	}
+	if obj.Profanity == "" {
+		obj.Profanity = "sfw"
+	}
+}
 
 const (
 	adjFile  = "data/adjectives.txt"
@@ -63,33 +70,75 @@ const (
 	m4       = 8
 )
 
+var (
+	config        settings
+	currCreds     credentials
+	clickedCreds  credentials
+	adjectives    []string
+	nouns         []string
+	sfwDict       bool
+	nsfwDict      bool
+	sailorRedneck bool
+	loadDict      bool
+	passLenght    int
+)
+
 type item = menuet.MenuItem
 
+func main() {
+	// debugMode := false
+	config := settings{}
+	config.Info()
+
+	currCreds = credentials{}
+	clickedCreds = credentials{}
+
+	setMenuState(config.Profanity)
+
+	app := menuet.App()
+	app.Children = menuItems
+	app.Name = "PWgo"
+	app.Label = "com.github.evilcloud.PWgo"
+	app.AutoUpdate.Version = "v0.2"
+	app.AutoUpdate.Repo = "evilcloud/PWgo"
+	app.RunApplication()
+}
+
+func menuDisplayCredential(details string, mode string) item {
+	return item{
+		Text:       details,
+		FontWeight: menuet.WeightMedium,
+		FontSize:   16,
+		Clicked: func() {
+			clipboard.WriteAll(details)
+			switch mode {
+			case "username":
+				clickedCreds.Username = details
+				clickedCreds.uname.time = time.Now()
+			case "password":
+				clickedCreds.Password = details
+				clickedCreds.pass.time = time.Now()
+			}
+		},
+	}
+}
+
 func menuItems() []item {
-	username, password := generateUsernamePass()
+	currCreds.Username, currCreds.Password = generateUsernamePass()
 
 	spacer := item{}
 
 	return []item{
 		item{Text: "Username"},
-		item{Text: username,
-			FontWeight: menuet.WeightMedium,
-			FontSize:   16,
-			Clicked: func() {
-				clipboard.WriteAll(username)
-				clickedUsername = username
-			}},
+		menuDisplayCredential(currCreds.Username, "username"),
 		item{Text: "Password"},
-		item{
-			Text:       password,
-			FontWeight: menuet.WeightMedium,
-			Clicked: func() {
-				clipboard.WriteAll(password)
-				clickedPassword = password
-			},
-		},
+		menuDisplayCredential(currCreds.Password, "password"),
 		spacer,
 		submenuLastItemClicked(),
+		spacer,
+		item{
+			Text: "Worlds of Wisdom"},
+		wordsOfWisdom(),
 		spacer,
 		item{
 			Text: "Settings",
@@ -134,9 +183,10 @@ func menuItems() []item {
 	}
 }
 
-func setMenuState(swearState string) {
+func setMenuState(profanity string) {
 	var image string
-	switch swearState {
+	debugNotification("setMenuState: " + config.Profanity)
+	switch profanity {
 	case "nsfw":
 		image = "nsfw.pdf"
 	case "sailor":
@@ -202,20 +252,11 @@ func submenuLastItemClicked() menuet.MenuItem {
 		Children: func() []menuet.MenuItem {
 			return []menuet.MenuItem{
 				item{Text: "Username"},
-				item{Text: clickedUsername,
-					FontWeight: menuet.WeightMedium,
-					FontSize:   14,
-					Clicked: func() {
-						clipboard.WriteAll(clickedUsername)
-					}},
+				// item{Text: clickedCreds.uname.time.String()},
+				menuDisplayCredential(clickedCreds.Username, "clicked"),
 				item{},
 				item{Text: "Password"},
-				item{Text: clickedPassword,
-					FontWeight: menuet.WeightMedium,
-					FontSize:   14,
-					Clicked: func() {
-						clipboard.WriteAll(clickedPassword)
-					}},
+				menuDisplayCredential(clickedCreds.Password, "clicked"),
 			}
 		},
 	}
@@ -225,13 +266,22 @@ func submenuAdditionalSecurity() menuet.MenuItem {
 	return item{
 		Text: "Number and special char randomly placed",
 		Clicked: func() {
-			if nsRandomPlace {
-				nsRandomPlace = false
+			if config.RandomPlacing {
+				config.RandomPlacing = false
 			} else {
-				nsRandomPlace = true
+				config.RandomPlacing = true
 			}
 		},
-		State: nsRandomPlace}
+		State: config.RandomPlacing}
+}
+
+func wordsOfWisdom() item {
+	word1 := pickRandomWord(adjectives)
+	word2 := pickRandomWord(nouns)
+	// return item{
+	// 	Text: word1 + " " + word2,
+	// }
+	return menuDisplayCredential(word1+" "+word2, "none")
 }
 
 // general functions
@@ -251,7 +301,7 @@ func generatePass(passData []string) string {
 
 	number := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
 	specialChar := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
-	if nsRandomPlace {
+	if config.RandomPlacing {
 		numberPosition = pickNumberRange(passLenght)
 		charPosition = pickNumberRange(passLenght)
 	}
