@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -14,10 +15,10 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
+	"github.com/hako/durafmt"
 )
 
 // FIXME: sort out the scopes -- too many globals?
-// TODO: Add time to last-clicked passwords
 // TODO: Externalise all strings
 
 func debugNotification(text string) {
@@ -252,15 +253,27 @@ func submenuLastItemClicked() menuet.MenuItem {
 		Children: func() []menuet.MenuItem {
 			return []menuet.MenuItem{
 				item{Text: "Username"},
-				// item{Text: clickedCreds.uname.time.String()},
+				item{
+					Text:     humaniseDuration(clickedCreds.uname.time),
+					FontSize: 10,
+				},
 				menuDisplayCredential(clickedCreds.Username, "clicked"),
 				item{},
 				item{Text: "Password"},
+				item{
+					Text:     humaniseDuration(clickedCreds.pass.time),
+					FontSize: 10,
+				},
 				menuDisplayCredential(clickedCreds.Password, "clicked"),
 			}
 		},
 	}
 }
+
+// func whatTimeAgo(start time.Time) string {
+// 	end := time.Now()
+// 	return humaniseDuration(start, end)
+// }
 
 func submenuAdditionalSecurity() menuet.MenuItem {
 	return item{
@@ -278,9 +291,6 @@ func submenuAdditionalSecurity() menuet.MenuItem {
 func wordsOfWisdom() item {
 	word1 := pickRandomWord(adjectives)
 	word2 := pickRandomWord(nouns)
-	// return item{
-	// 	Text: word1 + " " + word2,
-	// }
 	return menuDisplayCredential(word1+" "+word2, "none")
 }
 
@@ -394,4 +404,19 @@ func generateUsernamePass() (string, string) {
 	clipboard.WriteAll(password)
 
 	return username, password
+}
+
+func humaniseDuration(start time.Time) string {
+	end := time.Now()
+	diff := end.Sub(start)
+	var empty time.Time
+	if start == empty {
+		return ""
+	}
+	duration, err := durafmt.ParseString(diff.String())
+	if err != nil {
+		fmt.Println(err)
+	}
+	dur := duration.Duration().Round(time.Second)
+	return dur.String() + " ago"
 }
