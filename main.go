@@ -14,6 +14,7 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
+	"github.com/dustin/go-humanize"
 )
 
 // FIXME: sort out the scopes -- too many globals?
@@ -228,13 +229,9 @@ func nsfwItem() menuet.MenuItem {
 			if config.profanity.nsfw {
 				config.profanity.sfw = true
 				config.profanity.nsfw = false
-				// config.profanity.sailor = false
-				// setMenuState()
 			} else {
 				config.profanity.sfw = false
 				config.profanity.nsfw = true
-				// config.profanity.sailor = false
-				// setMenuState()
 			}
 			config.profanity.sailor = false
 			setMenuState()
@@ -397,88 +394,5 @@ func generateUsernamePass() (string, string) {
 }
 
 func humaniseDuration(start time.Time) string {
-	// TODO: humanise more
-	// less than a minute ago
-	// couple of minutes ago
-	// half hour ago
-	// around an hour ago
-	// some hours ago
-	// yesterday
-	// long time ago
-	end := time.Now()
-	diff := end.Sub(start)
-	var empty time.Time
-	if start == empty {
-		return ""
-	}
-
-	var ret string
-
-	// days := diff.Hours() / 24
-	// log.Println(days)
-	// switch days {
-	// case 0:
-	// 	ret = ""
-	// case 1:
-	// 	ret = "yesterday"
-	// case 2, 3, 4:
-	// 	ret = "couple of days ago"
-	// default:
-	// 	ret = ""
-	// }
-	// if ret != "" {
-	// 	return ret
-	// }
-
-	// log.Println("hours", diff.Hours)
-	// switch diff.Hours() {
-	// case 0:
-	// 	ret = ""
-	// case 23, 22, 21, 20:
-	// 	ret = "almost yesterday"
-	// case 1:
-	// 	ret = "an hour ago"
-	// case 2, 3:
-	// 	ret = "couple of hours ago"
-	// default:
-	// 	ret = "today some hours ago"
-	// }
-	// if ret != "" {
-	// 	return ret
-	// }
-
-	// switch diff.Minutes() {
-	// case 0:
-	// 	ret = "less than a minute ago"
-	// case 1:
-	// 	ret = "a minute ago"
-	// case 2, 3:
-	// 	ret = "couple of minutes ago"
-	// case 4, 5, 6:
-	// 	ret = "about five minutes ago"
-	// case 19, 20, 21:
-	// 	ret = "about twenty minutes ago"
-	// case 29, 30, 31:
-	// 	ret = "about half hour ago"
-	// default:
-	// 	ret = "less than an hour ago"
-	// }
-	// return ret
-
-	if diff.Hours() > 48 {
-		ret = "long time ago"
-	} else if diff.Hours() > 24 {
-		ret = "yesterday"
-	} else if diff.Hours() > 3 {
-		ret = "hours ago"
-	} else if diff.Hours() > 1 {
-		ret = "couple of hours ago"
-	} else if diff.Minutes() < 1 {
-		ret = "less than a minute ago"
-	} else if diff.Minutes() < 4 {
-		ret = "couple of minutes ago"
-	} else {
-		ret = "just now"
-	}
-	return ret
+	return humanize.Time(start)
 }
