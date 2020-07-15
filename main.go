@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -15,11 +14,11 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/caseymrm/menuet"
-	"github.com/hako/durafmt"
 )
 
 // FIXME: sort out the scopes -- too many globals?
 // TODO: Externalise all strings
+// FIXME: humanise option doesn't work properly
 
 func debugNotification(text string) {
 	// log.Println(text)
@@ -30,9 +29,7 @@ func debugNotification(text string) {
 }
 
 type credentials struct {
-	Username string
-	Password string
-	uname    struct {
+	uname struct {
 		value string
 		time  time.Time
 	}
@@ -40,61 +37,56 @@ type credentials struct {
 		value string
 		time  time.Time
 	}
-
-	time struct {
-		last time.Time
-	}
 }
 
 type settings struct {
-	PassLenght    int
-	Profanity     string
+	passLength    int
 	RandomPlacing bool
+	loadDict      bool
+	profanity     struct {
+		sfw    bool
+		nsfw   bool
+		sailor bool
+	}
 }
 
 func (obj *settings) Info() {
-	if obj.PassLenght == 0 {
-		obj.PassLenght = 6
+	if obj.passLength < passShort {
+		obj.passLength = passStandard
 	}
-	if obj.Profanity == "" {
-		obj.Profanity = "sfw"
+	if obj.profanity.sfw == obj.profanity.nsfw == obj.profanity.sailor == false {
+		obj.profanity.sfw = true
 	}
 }
 
 const (
-	adjFile  = "data/adjectives.txt"
-	nounFile = "data/nouns.txt"
-	badFile  = "data/bad.txt"
-	m1       = 4
-	m2       = 5
-	m3       = 6
-	m4       = 8
+	adjFile        = "data/adjectives.txt"
+	nounFile       = "data/nouns.txt"
+	badFile        = "data/bad.txt"
+	passShort      = 4
+	passAcceptable = 5
+	passStandard   = 6
+	passLong       = 8
 )
 
 var (
-	config        settings
-	currCreds     credentials
-	clickedCreds  credentials
-	adjectives    []string
-	nouns         []string
-	sfwDict       bool
-	nsfwDict      bool
-	sailorRedneck bool
-	loadDict      bool
-	passLenght    int
+	config       settings
+	currCreds    credentials
+	clickedCreds credentials
+	adjectives   []string
+	nouns        []string
 )
 
 type item = menuet.MenuItem
 
 func main() {
-	// debugMode := false
 	config := settings{}
 	config.Info()
 
 	currCreds = credentials{}
 	clickedCreds = credentials{}
 
-	setMenuState(config.Profanity)
+	setMenuState()
 
 	app := menuet.App()
 	app.Children = menuItems
@@ -114,10 +106,10 @@ func menuDisplayCredential(details string, mode string) item {
 			clipboard.WriteAll(details)
 			switch mode {
 			case "username":
-				clickedCreds.Username = details
+				clickedCreds.uname.value = details
 				clickedCreds.uname.time = time.Now()
 			case "password":
-				clickedCreds.Password = details
+				clickedCreds.pass.value = details
 				clickedCreds.pass.time = time.Now()
 			}
 		},
@@ -125,15 +117,15 @@ func menuDisplayCredential(details string, mode string) item {
 }
 
 func menuItems() []item {
-	currCreds.Username, currCreds.Password = generateUsernamePass()
+	currCreds.uname.value, currCreds.pass.value = generateUsernamePass()
 
 	spacer := item{}
 
 	return []item{
 		item{Text: "Username"},
-		menuDisplayCredential(currCreds.Username, "username"),
+		menuDisplayCredential(currCreds.uname.value, "username"),
 		item{Text: "Password"},
-		menuDisplayCredential(currCreds.Password, "password"),
+		menuDisplayCredential(currCreds.pass.value, "password"),
 		spacer,
 		submenuLastItemClicked(),
 		spacer,
@@ -147,31 +139,31 @@ func menuItems() []item {
 				return []menuet.MenuItem{
 					{Text: "Length (words)"},
 					{
-						Text: strconv.Itoa(m1),
+						Text: strconv.Itoa(passShort),
 						Clicked: func() {
-							passLenght = m1
+							config.passLength = passShort
 						},
-						State: passLenght == m1,
+						State: config.passLength == passShort,
 					}, {
-						Text: strconv.Itoa(m2),
+						Text: strconv.Itoa(passAcceptable),
 						Clicked: func() {
-							passLenght = m2
+							config.passLength = passAcceptable
 						},
-						State: passLenght == m2,
+						State: config.passLength == passAcceptable,
 					},
 					{
-						Text: strconv.Itoa(m3),
+						Text: strconv.Itoa(passStandard),
 						Clicked: func() {
-							passLenght = m3
+							config.passLength = passStandard
 						},
-						State: passLenght == m3,
+						State: config.passLength == passStandard,
 					},
 					{
-						Text: strconv.Itoa(m4),
+						Text: strconv.Itoa(passLong),
 						Clicked: func() {
-							passLenght = m4
+							config.passLength = passLong
 						},
-						State: passLenght == m4,
+						State: config.passLength == passLong,
 					},
 					{Text: "Additional security"},
 					submenuAdditionalSecurity(),
@@ -184,17 +176,17 @@ func menuItems() []item {
 	}
 }
 
-func setMenuState(profanity string) {
+func setMenuState() {
 	var image string
-	debugNotification("setMenuState: " + config.Profanity)
-	switch profanity {
-	case "nsfw":
-		image = "nsfw.pdf"
-	case "sailor":
+
+	if config.profanity.sailor {
 		image = "sailor.pdf"
-	default:
+	} else if config.profanity.nsfw {
+		image = "nsfw.pdf"
+	} else {
 		image = "pw.pdf"
 	}
+
 	menuet.App().SetMenuState(&menuet.MenuState{
 		Image: image,
 	})
@@ -204,24 +196,25 @@ func setMenuState(profanity string) {
 // menu items
 func sailorItem() menuet.MenuItem {
 	sailorItem := item{Text: "Sailor-redneck mode (only in NSFW mode)"}
-	if nsfwDict {
+	if config.profanity.nsfw {
 		sailorItem = item{Text: "Sailor-redneck mode",
 			Clicked: func() {
-				loadDict = false
-				if sailorRedneck {
-					sailorRedneck = false
-					nsfwDict = true
-					setMenuState("nsfw")
+				config.loadDict = false
+				if config.profanity.sailor {
+					config.profanity.sailor = false
+					config.profanity.nsfw = true
+					// setMenuState()
 				} else {
-					sailorRedneck = true
-					setMenuState("sailor")
+					config.profanity.sailor = true
+					// setMenuState()
 					menuet.App().Notification(menuet.Notification{
 						Title:   "A less secure novelty setting.",
 						Message: "Also using it will make you look like a juvenile asshole. Use at your own risk.",
 					})
 				}
+				setMenuState()
 			},
-			State: sailorRedneck,
+			State: config.profanity.sailor,
 		}
 	}
 	return sailorItem
@@ -231,20 +224,22 @@ func nsfwItem() menuet.MenuItem {
 	return item{
 		Text: "NSFW",
 		Clicked: func() {
-			loadDict = false
-			if nsfwDict {
-				nsfwDict = false
-				sailorRedneck = false
-				sfwDict = true
-				setMenuState("sfw")
+			config.loadDict = false
+			if config.profanity.nsfw {
+				config.profanity.sfw = true
+				config.profanity.nsfw = false
+				// config.profanity.sailor = false
+				// setMenuState()
 			} else {
-				nsfwDict = true
-				sfwDict = false
-				sailorRedneck = false
-				setMenuState("nsfw")
+				config.profanity.sfw = false
+				config.profanity.nsfw = true
+				// config.profanity.sailor = false
+				// setMenuState()
 			}
+			config.profanity.sailor = false
+			setMenuState()
 		},
-		State: nsfwDict}
+		State: config.profanity.nsfw}
 }
 
 func submenuLastItemClicked() menuet.MenuItem {
@@ -257,23 +252,18 @@ func submenuLastItemClicked() menuet.MenuItem {
 					Text:     humaniseDuration(clickedCreds.uname.time),
 					FontSize: 10,
 				},
-				menuDisplayCredential(clickedCreds.Username, "clicked"),
+				menuDisplayCredential(clickedCreds.uname.value, "clicked"),
 				item{},
 				item{Text: "Password"},
 				item{
 					Text:     humaniseDuration(clickedCreds.pass.time),
 					FontSize: 10,
 				},
-				menuDisplayCredential(clickedCreds.Password, "clicked"),
+				menuDisplayCredential(clickedCreds.pass.value, "clicked"),
 			}
 		},
 	}
 }
-
-// func whatTimeAgo(start time.Time) string {
-// 	end := time.Now()
-// 	return humaniseDuration(start, end)
-// }
 
 func submenuAdditionalSecurity() menuet.MenuItem {
 	return item{
@@ -302,21 +292,21 @@ func generatePass(passData []string) string {
 	}
 
 	var generatedPass string = ""
-	if passLenght < m1 {
-		passLenght = m3
+	if config.passLength < passShort {
+		config.passLength = passStandard
 	}
 
-	numberPosition := passLenght
-	charPosition := passLenght
+	numberPosition := config.passLength
+	charPosition := config.passLength
 
 	number := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
 	specialChar := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
 	if config.RandomPlacing {
-		numberPosition = pickNumberRange(passLenght)
-		charPosition = pickNumberRange(passLenght)
+		numberPosition = pickNumberRange(config.passLength)
+		charPosition = pickNumberRange(config.passLength)
 	}
 
-	for i := 1; i < passLenght+1; i++ {
+	for i := 1; i < config.passLength+1; i++ {
 		generatedPass += pickRandomWord(passData)
 		if i == numberPosition {
 			generatedPass += number
@@ -362,28 +352,28 @@ func isError(err error) {
 }
 
 func generateUsernamePass() (string, string) {
-	if loadDict == false {
-		loadDict = true
+	if config.loadDict == false {
+		config.loadDict = true
 		switch {
 		case len(adjectives) < 1:
-			loadDict = true
+			config.loadDict = true
 			adjectives = openFile(adjFile)
 			nouns = openFile(nounFile)
 			log.Println("initial dictionary load")
-		case sfwDict:
-			loadDict = true
+		case config.profanity.sfw:
+			config.loadDict = true
 			adjectives = openFile(adjFile)
 			nouns = openFile(nounFile)
 			log.Print("SFW")
-		case nsfwDict:
+		case config.profanity.nsfw:
 			bad := openFile(badFile)
-			if sailorRedneck {
-				loadDict = true
+			if config.profanity.sailor {
+				config.loadDict = true
 				adjectives = bad
 				nouns = adjectives
 				log.Println("Hello, sailor!")
 			} else {
-				loadDict = true
+				config.loadDict = true
 				adjectives = append(openFile(adjFile), bad...)
 				nouns = append(openFile(nounFile), bad...)
 				log.Print("NSFW")
@@ -421,10 +411,74 @@ func humaniseDuration(start time.Time) string {
 	if start == empty {
 		return ""
 	}
-	duration, err := durafmt.ParseString(diff.String())
-	if err != nil {
-		fmt.Println(err)
+
+	var ret string
+
+	// days := diff.Hours() / 24
+	// log.Println(days)
+	// switch days {
+	// case 0:
+	// 	ret = ""
+	// case 1:
+	// 	ret = "yesterday"
+	// case 2, 3, 4:
+	// 	ret = "couple of days ago"
+	// default:
+	// 	ret = ""
+	// }
+	// if ret != "" {
+	// 	return ret
+	// }
+
+	// log.Println("hours", diff.Hours)
+	// switch diff.Hours() {
+	// case 0:
+	// 	ret = ""
+	// case 23, 22, 21, 20:
+	// 	ret = "almost yesterday"
+	// case 1:
+	// 	ret = "an hour ago"
+	// case 2, 3:
+	// 	ret = "couple of hours ago"
+	// default:
+	// 	ret = "today some hours ago"
+	// }
+	// if ret != "" {
+	// 	return ret
+	// }
+
+	// switch diff.Minutes() {
+	// case 0:
+	// 	ret = "less than a minute ago"
+	// case 1:
+	// 	ret = "a minute ago"
+	// case 2, 3:
+	// 	ret = "couple of minutes ago"
+	// case 4, 5, 6:
+	// 	ret = "about five minutes ago"
+	// case 19, 20, 21:
+	// 	ret = "about twenty minutes ago"
+	// case 29, 30, 31:
+	// 	ret = "about half hour ago"
+	// default:
+	// 	ret = "less than an hour ago"
+	// }
+	// return ret
+
+	if diff.Hours() > 48 {
+		ret = "long time ago"
+	} else if diff.Hours() > 24 {
+		ret = "yesterday"
+	} else if diff.Hours() > 3 {
+		ret = "hours ago"
+	} else if diff.Hours() > 1 {
+		ret = "couple of hours ago"
+	} else if diff.Minutes() < 1 {
+		ret = "less than a minute ago"
+	} else if diff.Minutes() < 4 {
+		ret = "couple of minutes ago"
+	} else {
+		ret = "just now"
 	}
-	dur := duration.Duration().Round(time.Second)
-	return dur.String() + " ago"
+	return ret
 }
