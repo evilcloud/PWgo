@@ -27,8 +27,11 @@ Of course password managers offer password generatiors, but I personally find th
 The app uses three dictionaries:
 
 **Adjectives**: is a list of English language adjectives. Taken from [hugsy](https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913)
+
 **Nouns** is a 6'775 entries strong list of English language nouns. Taken from [The Great Noun List](http://www.desiquintans.com/nounlist)
+
 **Profanities** is a list of profanities, heavily edited -- I have tried as much as I could to remove prejudices and leave only insults. Many have slipped though and stayed. The list is in the state of cleaning. In any case, I advise against using profanities option.
+
 
 
 ## How to use it
