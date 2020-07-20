@@ -17,9 +17,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
-// FIXME: sort out the scopes -- too many globals?
 // TODO: Externalise all strings
-// FIXME: humanise option doesn't work properly
 
 func debugNotification(text string) {
 	// log.Println(text)
@@ -98,25 +96,7 @@ func main() {
 	app.RunApplication()
 }
 
-func menuDisplayCredential(details string, mode string) item {
-	return item{
-		Text:       details,
-		FontWeight: menuet.WeightMedium,
-		FontSize:   16,
-		Clicked: func() {
-			clipboard.WriteAll(details)
-			switch mode {
-			case "username":
-				clickedCreds.uname.value = details
-				clickedCreds.uname.time = time.Now()
-			case "password":
-				clickedCreds.pass.value = details
-				clickedCreds.pass.time = time.Now()
-			}
-		},
-	}
-}
-
+// menu items
 func menuItems() []item {
 	currCreds.uname.value, currCreds.pass.value = generateUsernamePass()
 
@@ -134,45 +114,25 @@ func menuItems() []item {
 			Text: "Words of Wisdom"},
 		wordsOfWisdom(),
 		spacer,
-		item{
-			Text: "Settings",
-			Children: func() []menuet.MenuItem {
-				return []menuet.MenuItem{
-					{Text: "Length (words)"},
-					{
-						Text: strconv.Itoa(passShort),
-						Clicked: func() {
-							config.passLength = passShort
-						},
-						State: config.passLength == passShort,
-					}, {
-						Text: strconv.Itoa(passAcceptable),
-						Clicked: func() {
-							config.passLength = passAcceptable
-						},
-						State: config.passLength == passAcceptable,
-					},
-					{
-						Text: strconv.Itoa(passStandard),
-						Clicked: func() {
-							config.passLength = passStandard
-						},
-						State: config.passLength == passStandard,
-					},
-					{
-						Text: strconv.Itoa(passLong),
-						Clicked: func() {
-							config.passLength = passLong
-						},
-						State: config.passLength == passLong,
-					},
-					{Text: "Additional security"},
-					submenuAdditionalSecurity(),
-					spacer,
-					nsfwItem(),
-					sailorItem(),
-				}
-			},
+		submenuSettings(),
+	}
+}
+
+func menuDisplayCredential(details string, mode string) item {
+	return item{
+		Text:       details,
+		FontWeight: menuet.WeightMedium,
+		FontSize:   16,
+		Clicked: func() {
+			clipboard.WriteAll(details)
+			switch mode {
+			case "username":
+				clickedCreds.uname.value = details
+				clickedCreds.uname.time = time.Now()
+			case "password":
+				clickedCreds.pass.value = details
+				clickedCreds.pass.time = time.Now()
+			}
 		},
 	}
 }
@@ -194,7 +154,36 @@ func setMenuState() {
 	menuet.App().MenuChanged()
 }
 
-// menu items
+func submenuSettings() item {
+	subSubLengthItem := func(length int) item {
+		return item{
+			Text: strconv.Itoa(length),
+			Clicked: func() {
+				config.passLength = length
+			},
+			State: config.passLength == length,
+		}
+	}
+	return item{
+		Text: "Settings",
+		Children: func() []menuet.MenuItem {
+			return []menuet.MenuItem{
+				{Text: "Length (words)"},
+				subSubLengthItem(passShort),
+				subSubLengthItem(passAcceptable),
+				subSubLengthItem(passStandard),
+				subSubLengthItem(passLong),
+
+				{Text: "Additional security"},
+				submenuAdditionalSecurity(),
+				item{},
+				nsfwItem(),
+				sailorItem(),
+			}
+		},
+	}
+}
+
 func sailorItem() menuet.MenuItem {
 	sailorItem := item{Text: "Sailor-redneck mode (only in NSFW mode)"}
 	if config.profanity.nsfw {
@@ -204,10 +193,8 @@ func sailorItem() menuet.MenuItem {
 				if config.profanity.sailor {
 					config.profanity.sailor = false
 					config.profanity.nsfw = true
-					// setMenuState()
 				} else {
 					config.profanity.sailor = true
-					// setMenuState()
 					menuet.App().Notification(menuet.Notification{
 						Title:   "A less secure novelty setting.",
 						Message: "Also using it will make you look like a juvenile asshole. Use at your own risk.",
@@ -336,18 +323,22 @@ func openFile(fileName string) []string {
 	return strings.Split(string(fileContent), "\n")
 }
 
+// Messaging
 func isError(err error) {
 	if err != nil {
 		log.Println(err)
-		menuet.App().Notification(menuet.Notification{
-			Title:        "Error!",
-			Message:      err.Error(),
-			ActionButton: "Quit app",
-			CloseButton:  "Close notification",
-		})
+		popupMessage("Error", err.Error())
 	}
 }
 
+func popupMessage(title string, message string) {
+	menuet.App().Notification(menuet.Notification{
+		Title:   title,
+		Message: message,
+	})
+}
+
+// Generators
 func generateUsernamePass() (string, string) {
 	if config.loadDict == false {
 		config.loadDict = true
