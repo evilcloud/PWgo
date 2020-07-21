@@ -91,7 +91,7 @@ func main() {
 	app.Children = menuItems
 	app.Name = "PWgo"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.2"
+	app.AutoUpdate.Version = "v0.99"
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
@@ -101,6 +101,7 @@ func menuItems() []item {
 	checkDictionaries()
 	currCreds.uname.value = generateUsername()
 	currCreds.pass.value = generatePassword()
+	clipboard.WriteAll(currCreds.pass.value)
 	wow := generateWoW()
 
 	spacer := item{}
