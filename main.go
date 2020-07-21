@@ -66,6 +66,7 @@ const (
 	passAcceptable = 12
 	passStandard   = 20
 	passLong       = 40
+	appVersion     = "v1.0.1\t0721.21A"
 )
 
 var (
@@ -91,7 +92,7 @@ func main() {
 	app.Children = menuItems
 	app.Name = "Password machine"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v1.0.1"
+	app.AutoUpdate.Version = appVersion
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
@@ -184,6 +185,7 @@ func submenuSettings() item {
 				item{Text: "Level of profanity"},
 				nsfwItem(),
 				sailorItem(),
+				subSubAppVersion(),
 			}
 		},
 	}
@@ -229,6 +231,13 @@ func nsfwItem() menuet.MenuItem {
 			setMenuState()
 		},
 		State: config.profanity.nsfw}
+}
+
+func subSubAppVersion() item {
+	return item{
+		Text:     appVersion,
+		FontSize: 7,
+	}
 }
 
 func submenuLastItemClicked() menuet.MenuItem {
