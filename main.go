@@ -89,9 +89,9 @@ func main() {
 
 	app := menuet.App()
 	app.Children = menuItems
-	app.Name = "PWgo"
+	app.Name = "Password machine"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v0.99"
+	app.AutoUpdate.Version = "v1.0"
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
