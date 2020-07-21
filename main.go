@@ -91,7 +91,7 @@ func main() {
 	app.Children = menuItems
 	app.Name = "Password machine"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = "v1.0"
+	app.AutoUpdate.Version = "v1.0.1"
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
 }
@@ -122,7 +122,7 @@ func menuItems() []item {
 	}
 }
 
-func menuDisplayCredential(details string, mode string) item {
+func menuDisplayCredential(details, mode string) item {
 	return item{
 		Text:       details,
 		FontWeight: menuet.WeightMedium,
@@ -172,15 +172,16 @@ func submenuSettings() item {
 		Text: "Settings",
 		Children: func() []menuet.MenuItem {
 			return []menuet.MenuItem{
-				{Text: "Length (words)"},
+				{Text: "Password length"},
 				subSubLengthItem(passShort),
 				subSubLengthItem(passAcceptable),
 				subSubLengthItem(passStandard),
 				subSubLengthItem(passLong),
 				item{},
-				{Text: "Additional security"},
-				submenuAdditionalSecurity(),
-				item{},
+				// {Text: "Additional security"},
+				// submenuAdditionalSecurity(),
+				// item{},
+				item{Text: "Level of profanity"},
 				nsfwItem(),
 				sailorItem(),
 			}
@@ -296,7 +297,8 @@ func isError(err error) {
 	}
 }
 
-func popupMessage(title string, message string) {
+// Creates a banner with the predetermined title and message. Dependency on menuet library
+func popupMessage(title, message string) {
 	menuet.App().Notification(menuet.Notification{
 		Title:   title,
 		Message: message,
@@ -304,14 +306,19 @@ func popupMessage(title string, message string) {
 }
 
 // Generators
+
+// Returns a joined pair of words from generateAdjectiveNounPair() function
 func generateUsername() string {
 	return strings.Join(generateAdjectiveNounPair(), "")
 }
 
+// Returns a joined with a space pair of word from generateAdjectiveNounPair() function
 func generateWoW() string {
 	return strings.Join(generateAdjectiveNounPair(), " ")
 }
 
+// Generates a pair of random adjective and noun (only alpha characters) and returns as an array
+// Used mostly by Words of Wisdom and Username functions
 func generateAdjectiveNounPair() []string {
 	var ret []string
 	reg, err := regexp.Compile("[^a-zA-Z]+")
@@ -323,6 +330,7 @@ func generateAdjectiveNounPair() []string {
 	return ret
 }
 
+// Generates a string of random words from adjectives and nouns dictionaries, and returns as a string
 func generatePassword() string {
 	// FIXME: put the check in the init part of the code
 	if config.passLength < passShort {
@@ -345,6 +353,7 @@ func generatePassword() string {
 	return "Failed to match pass to length"
 }
 
+// Generates random number (except 0) and some special character (from the list). Returns as an array
 func insertRandomNumChar(data []string) []string {
 	numeral := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
 	char := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
