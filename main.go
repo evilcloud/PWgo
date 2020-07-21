@@ -62,10 +62,10 @@ const (
 	adjFile        = "data/adjectives.txt"
 	nounFile       = "data/nouns.txt"
 	badFile        = "data/bad.txt"
-	passShort      = 4
-	passAcceptable = 5
-	passStandard   = 6
-	passLong       = 8
+	passShort      = 8
+	passAcceptable = 12
+	passStandard   = 20
+	passLong       = 40
 )
 
 var (
@@ -98,7 +98,10 @@ func main() {
 
 // menu items
 func menuItems() []item {
-	currCreds.uname.value, currCreds.pass.value = generateUsernamePass()
+	checkDictionaries()
+	currCreds.uname.value = generateUsername()
+	currCreds.pass.value = generatePassword()
+	wow := generateWoW()
 
 	spacer := item{}
 
@@ -112,7 +115,7 @@ func menuItems() []item {
 		spacer,
 		item{
 			Text: "Words of Wisdom"},
-		wordsOfWisdom(),
+		menuDisplayCredential(wow, "none"),
 		spacer,
 		submenuSettings(),
 	}
@@ -173,7 +176,7 @@ func submenuSettings() item {
 				subSubLengthItem(passAcceptable),
 				subSubLengthItem(passStandard),
 				subSubLengthItem(passLong),
-
+				item{},
 				{Text: "Additional security"},
 				submenuAdditionalSecurity(),
 				item{},
@@ -262,46 +265,7 @@ func submenuAdditionalSecurity() menuet.MenuItem {
 		State: config.RandomPlacing}
 }
 
-func wordsOfWisdom() item {
-	word1 := pickRandomWord(adjectives)
-	word2 := pickRandomWord(nouns)
-	return menuDisplayCredential(word1+" "+word2, "none")
-}
-
 // general functions
-func generatePass(passData []string) string {
-	// FIXME: why is empty passData array's length is 2?
-	if len(passData) == 2 {
-		return ""
-	}
-
-	var generatedPass string = ""
-	if config.passLength < passShort {
-		config.passLength = passStandard
-	}
-
-	numberPosition := config.passLength
-	charPosition := config.passLength
-
-	number := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
-	specialChar := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
-	if config.RandomPlacing {
-		numberPosition = pickNumberRange(config.passLength)
-		charPosition = pickNumberRange(config.passLength)
-	}
-
-	for i := 1; i < config.passLength+1; i++ {
-		generatedPass += pickRandomWord(passData)
-		if i == numberPosition {
-			generatedPass += number
-		}
-		if i == charPosition {
-			generatedPass += specialChar
-		}
-	}
-	return generatedPass
-}
-
 func pickNumberRange(num int) int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(num)
@@ -339,7 +303,67 @@ func popupMessage(title string, message string) {
 }
 
 // Generators
-func generateUsernamePass() (string, string) {
+func generateUsername() string {
+	return strings.Join(generateAdjectiveNounPair(), "")
+}
+
+func generateWoW() string {
+	return strings.Join(generateAdjectiveNounPair(), " ")
+}
+
+func generateAdjectiveNounPair() []string {
+	var ret []string
+	reg, err := regexp.Compile("[^a-zA-Z]+")
+	isError(err)
+
+	adj := reg.ReplaceAllLiteralString(strings.Title(pickRandomWord(adjectives)), "")
+	nou := reg.ReplaceAllLiteralString(strings.Title(pickRandomWord(nouns)), "")
+	ret = append(ret, []string{adj, nou}...)
+	return ret
+}
+
+func generatePassword() string {
+	// FIXME: put the check in the init part of the code
+	if config.passLength < passShort {
+		config.passLength = passStandard
+	}
+
+	var pass []string
+	totalDict := append(adjectives, nouns...)
+	for i := 1; i < 1000; i++ {
+		pass = append([]string{pickRandomWord(totalDict)}, pass...)
+		lenPassAlpha := len(strings.Join(pass, "")) - 2
+		if lenPassAlpha == config.passLength {
+			pass := insertRandomNumChar(pass)
+			return strings.Join(pass, "")
+		} else if lenPassAlpha > config.passLength {
+			pass = nil
+		}
+	}
+	popupMessage("Password failure", "Failed to match pass to length!")
+	return "Failed to match pass to length"
+}
+
+func insertRandomNumChar(data []string) []string {
+	numeral := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
+	char := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
+	// lenData := len(data)
+	// var numPosition, charPosition int
+
+	// if config.RandomPlacing {
+	// 	numPosition := pickNumberRange(lenData)
+	// 	charPosition := pickNumberRange(lenData + 1)
+	// } else {
+	// 	numPosition := lenData
+	// 	charPosition := lenData + 1
+	// }
+	data = append(data, []string{numeral}...)
+	data = append(data, []string{char}...)
+	return data
+}
+
+// dictionaries
+func checkDictionaries() {
 	if config.loadDict == false {
 		config.loadDict = true
 		switch {
@@ -368,22 +392,13 @@ func generateUsernamePass() (string, string) {
 			}
 		}
 	}
-
-	passData := append(adjectives, nouns...)
-	usernameUncleaned := strings.Title(pickRandomWord(adjectives)) + strings.Title(pickRandomWord(nouns))
-	reg, err := regexp.Compile("[^a-zA-Z]+")
-	isError(err)
-	username := reg.ReplaceAllString(usernameUncleaned, "")
-	if len(passData) == 2 {
-		username = "⚠️ NO DICTIONARY FOUND"
-	}
-	password := generatePass(passData)
-	// FIXED: add proper adjectives and nouns to sailor password -- NO. Let these juvies suffer from inferior protection
-	clipboard.WriteAll(password)
-
-	return username, password
 }
 
 func humaniseDuration(start time.Time) string {
-	return humanize.Time(start)
+	ret := humanize.Time(start)
+	log.Println(ret)
+	if ret == "a long while ago" {
+		ret = ""
+	}
+	return ret
 }
