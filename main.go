@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -18,14 +19,8 @@ import (
 )
 
 // TODO: Externalise all strings
-
-func debugNotification(text string) {
-	// log.Println(text)
-	// menuet.App().Notification(menuet.Notification{
-	// 	Title:   "Debug notification",
-	// 	Message: text,
-	// })
-}
+// TODO: build a production init tool (go build -ldflags="-X 'main.Version=v1.0.0'")
+// TODO: build automatic packer for create-dmg 'Password machine.app' --dmg-title='Password machine'
 
 type credentials struct {
 	uname struct {
@@ -42,6 +37,7 @@ type settings struct {
 	passLength    int
 	RandomPlacing bool
 	loadDict      bool
+	devVersion    bool
 	profanity     struct {
 		sfw    bool
 		nsfw   bool
@@ -59,17 +55,18 @@ func (obj *settings) Info() {
 }
 
 const (
-	adjFile        = "data/adjectives.txt"
-	nounFile       = "data/nouns.txt"
-	badFile        = "data/bad.txt"
-	passShort      = 8
-	passAcceptable = 12
-	passStandard   = 20
-	passLong       = 40
-	appVersion     = "v1.0.1\t0721.21A"
+	adjFile          = "data/adjectives.txt"
+	nounFile         = "data/nouns.txt"
+	badFile          = "data/bad.txt"
+	devVersionString = "development version\t"
+	passShort        = 8
+	passAcceptable   = 12
+	passStandard     = 20
+	passLong         = 40
 )
 
 var (
+	Version      string = devVersionString
 	config       settings
 	currCreds    credentials
 	clickedCreds credentials
@@ -79,12 +76,32 @@ var (
 
 type item = menuet.MenuItem
 
+func getDefaults() {
+	clickedCreds.uname.value = menuet.Defaults().String("uname.value")
+	// log.Println(menuet.Defaults().String("uname.time"))
+	clickedCreds.pass.value = menuet.Defaults().String("pass.value")
+	// clickedCreds.pass.time, _ = time.Parse("2020-07-22 15:33:17.865231 +0800 HKT m=+16.132953837", menuet.Defaults().String("pass.time"))
+	config.passLength = menuet.Defaults().Integer("passLength")
+}
+
+func setDefaults() {
+	menuet.Defaults().SetInteger("passLength", config.passLength)
+	menuet.Defaults().SetString("uname.value", clickedCreds.uname.value)
+	// menuet.Defaults().SetString("uname.time", clickedCreds.uname.time.String())
+	menuet.Defaults().SetString("pass.value", clickedCreds.pass.value)
+	// menuet.Defaults().SetString("pass.time", clickedCreds.pass.time.String())
+}
+
 func main() {
+	isDevVersion()
+
 	config := settings{}
 	config.Info()
 
 	currCreds = credentials{}
 	clickedCreds = credentials{}
+
+	getDefaults()
 
 	setMenuState()
 
@@ -92,14 +109,23 @@ func main() {
 	app.Children = menuItems
 	app.Name = "Password machine"
 	app.Label = "com.github.evilcloud.PWgo"
-	app.AutoUpdate.Version = appVersion
+	app.AutoUpdate.Version = Version
 	app.AutoUpdate.Repo = "evilcloud/PWgo"
 	app.RunApplication()
+}
+
+func passwordMachineText() string {
+	if !config.devVersion {
+		return "Password machine\t" + Version
+	}
+	return "Password machine"
 }
 
 // menu items
 func menuItems() []item {
 	checkDictionaries()
+
+	// getRandomEmoji()
 	currCreds.uname.value = generateUsername()
 	currCreds.pass.value = generatePassword()
 	clipboard.WriteAll(currCreds.pass.value)
@@ -108,6 +134,14 @@ func menuItems() []item {
 	spacer := item{}
 
 	return []item{
+		item{
+			Text:       passwordMachineText(),
+			FontWeight: menuet.WeightBlack,
+			Clicked: func() {
+				debugNotification("clicked Title")
+			},
+		},
+		item{},
 		item{Text: "Username"},
 		menuDisplayCredential(currCreds.uname.value, "username"),
 		item{Text: "Password"},
@@ -134,17 +168,18 @@ func menuDisplayCredential(details, mode string) item {
 			case "username":
 				clickedCreds.uname.value = details
 				clickedCreds.uname.time = time.Now()
+				menuet.Defaults().SetString("uname", details)
 			case "password":
 				clickedCreds.pass.value = details
 				clickedCreds.pass.time = time.Now()
 			}
+			setDefaults()
 		},
 	}
 }
 
 func setMenuState() {
 	var image string
-
 	if config.profanity.sailor {
 		image = "sailor.pdf"
 	} else if config.profanity.nsfw {
@@ -185,7 +220,7 @@ func submenuSettings() item {
 				item{Text: "Level of profanity"},
 				nsfwItem(),
 				sailorItem(),
-				subSubAppVersion(),
+				subSubVersion(),
 			}
 		},
 	}
@@ -233,9 +268,9 @@ func nsfwItem() menuet.MenuItem {
 		State: config.profanity.nsfw}
 }
 
-func subSubAppVersion() item {
+func subSubVersion() item {
 	return item{
-		Text:     appVersion,
+		Text:     Version,
 		FontSize: 7,
 	}
 }
@@ -298,11 +333,33 @@ func openFile(fileName string) []string {
 	return strings.Split(string(fileContent), "\n")
 }
 
+// Adds to Version string the time of compile and trues config.devVersion if version is not changed by idflags
+func isDevVersion() {
+	if Version == devVersionString {
+		t := time.Now()
+		Version += t.String() + "\t" + getRandomEmoji() + getRandomEmoji()
+		config.devVersion = true
+	}
+}
+
 // Messaging
+
+// Pops up error message in the banner and sends to debugNotification error if such presists
 func isError(err error) {
 	if err != nil {
-		log.Println(err)
+		debugNotification(err.Error())
 		popupMessage("Error", err.Error())
+	}
+}
+
+// Prints log and pushes banner if development version. Does nothing if -idflagged as production
+func debugNotification(text string) {
+	if config.devVersion {
+		log.Println(text)
+		menuet.App().Notification(menuet.Notification{
+			Title:   "Debug notification",
+			Message: text,
+		})
 	}
 }
 
@@ -381,6 +438,14 @@ func insertRandomNumChar(data []string) []string {
 	return data
 }
 
+func getRandomEmoji() string {
+	rand.Seed(time.Now().UnixNano())
+	emojiNumber := strconv.Itoa((rand.Intn(64)) + 128640)
+	emoji := html.UnescapeString("&#" + emojiNumber + ";")
+	// fmt.Println(emoji)
+	return emoji
+}
+
 // dictionaries
 func checkDictionaries() {
 	if config.loadDict == false {
@@ -390,7 +455,7 @@ func checkDictionaries() {
 			config.loadDict = true
 			adjectives = openFile(adjFile)
 			nouns = openFile(nounFile)
-			log.Println("initial dictionary load")
+			debugNotification("initial dictionary load")
 		case config.profanity.sfw:
 			config.loadDict = true
 			adjectives = openFile(adjFile)
@@ -402,7 +467,7 @@ func checkDictionaries() {
 				config.loadDict = true
 				adjectives = bad
 				nouns = adjectives
-				log.Println("Hello, sailor!")
+				debugNotification("Hello, sailor!")
 			} else {
 				config.loadDict = true
 				adjectives = append(openFile(adjFile), bad...)
@@ -415,7 +480,7 @@ func checkDictionaries() {
 
 func humaniseDuration(start time.Time) string {
 	ret := humanize.Time(start)
-	log.Println(ret)
+	debugNotification(ret)
 	if ret == "a long while ago" {
 		ret = ""
 	}

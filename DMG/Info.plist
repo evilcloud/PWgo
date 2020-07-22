@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleExecutable</key>
-  <string>Password machine</string>
+  <string>PWgo</string>
   <key>CFBundleIconFile</key>
   <string>icon.icns</string>
   <key>CFBundleGetInfoString</key>
-  <string>Password machine</string>
+  <string>PWgo</string>
   <key>CFBundleIdentifier</key>
   <string>PWgo.evilcloud.github.com</string>
   <key>CFBundleName</key>
-  <string>Password machine</string>
+  <string>PWgo</string>
   <key>CFBundleShortVersionString</key>
-  <string>1.0.1</string>
+  <string>0.99</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
