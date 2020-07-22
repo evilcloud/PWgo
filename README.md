@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo)
-
 ![](assets/icon.png)
 
 # Password machine (v.1.0.1)
+[![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo)
+
 
 #### Go implementation of PW pass generator
 
