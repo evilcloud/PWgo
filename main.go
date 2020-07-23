@@ -81,6 +81,11 @@ func getDefaults() {
 	// log.Println(menuet.Defaults().String("uname.time"))
 	clickedCreds.pass.value = menuet.Defaults().String("pass.value")
 	// clickedCreds.pass.time, _ = time.Parse("2020-07-22 15:33:17.865231 +0800 HKT m=+16.132953837", menuet.Defaults().String("pass.time"))
+	// fmt.Println("saved:", clickedCreds.pass.time)
+	// sss, _ := time.Parse("2020-07-23 09:18:01.882518 +0800 HKT m=+6.644684739", menuet.Defaults().String("pass.time"))
+	// fmt.Println("loading:" + sss.String())
+	// sst, _ := time.Parse("2020-07-22 15:33:17.865231 +0800 HKT m=+16.132953837", sss.String())
+	// fmt.Println("sst:", sst, reflect.TypeOf(sst))
 	config.passLength = menuet.Defaults().Integer("passLength")
 }
 
@@ -89,20 +94,25 @@ func setDefaults() {
 	menuet.Defaults().SetString("uname.value", clickedCreds.uname.value)
 	// menuet.Defaults().SetString("uname.time", clickedCreds.uname.time.String())
 	menuet.Defaults().SetString("pass.value", clickedCreds.pass.value)
-	// menuet.Defaults().SetString("pass.time", clickedCreds.pass.time.String())
+	menuet.Defaults().SetString("pass.time", clickedCreds.pass.time.String())
+	// debugNotification("setting: " + clickedCreds.pass.time.String())
+	// st := clickedCreds.pass.time.String()
+	// fmt.Println(st, reflect.TypeOf(st))
+	// debugNotification("converting: " + clickedCreds.pass.time.String())
+
 }
 
-func main() {
-	isDevVersion()
-
+func init() {
 	config := settings{}
-	config.Info()
-
 	currCreds = credentials{}
 	clickedCreds = credentials{}
 
+	isDevVersion()
 	getDefaults()
+	config.Info()
+}
 
+func main() {
 	setMenuState()
 
 	app := menuet.App()
@@ -118,7 +128,7 @@ func passwordMachineText() string {
 	if !config.devVersion {
 		return "Password machine\t" + Version
 	}
-	return "Password machine"
+	return "Password machine\t" + getEmojis(2)
 }
 
 // menu items
@@ -144,7 +154,7 @@ func menuItems() []item {
 		item{},
 		item{Text: "Username"},
 		menuDisplayCredential(currCreds.uname.value, "username"),
-		item{Text: "Password"},
+		item{Text: "Password (" + strconv.Itoa(config.passLength) + " characters)"},
 		menuDisplayCredential(currCreds.pass.value, "password"),
 		spacer,
 		submenuLastItemClicked(),
@@ -168,7 +178,7 @@ func menuDisplayCredential(details, mode string) item {
 			case "username":
 				clickedCreds.uname.value = details
 				clickedCreds.uname.time = time.Now()
-				menuet.Defaults().SetString("uname", details)
+				// menuet.Defaults().SetString("uname", details)
 			case "password":
 				clickedCreds.pass.value = details
 				clickedCreds.pass.time = time.Now()
@@ -204,6 +214,7 @@ func submenuSettings() item {
 			State: config.passLength == length,
 		}
 	}
+	setDefaults()
 	return item{
 		Text: "Settings",
 		Children: func() []menuet.MenuItem {
@@ -287,7 +298,7 @@ func submenuLastItemClicked() menuet.MenuItem {
 				},
 				menuDisplayCredential(clickedCreds.uname.value, "clicked"),
 				item{},
-				item{Text: "Password"},
+				item{Text: "Password " + strconv.Itoa(config.passLength) + " characters)"},
 				item{
 					Text:     humaniseDuration(clickedCreds.pass.time),
 					FontSize: 10,
@@ -337,7 +348,7 @@ func openFile(fileName string) []string {
 func isDevVersion() {
 	if Version == devVersionString {
 		t := time.Now()
-		Version += t.String() + "\t" + getRandomEmoji() + getRandomEmoji()
+		Version += t.String()
 		config.devVersion = true
 	}
 }
@@ -438,12 +449,15 @@ func insertRandomNumChar(data []string) []string {
 	return data
 }
 
-func getRandomEmoji() string {
-	rand.Seed(time.Now().UnixNano())
-	emojiNumber := strconv.Itoa((rand.Intn(64)) + 128640)
-	emoji := html.UnescapeString("&#" + emojiNumber + ";")
-	// fmt.Println(emoji)
-	return emoji
+// Returns predetermined number of random emojis
+func getEmojis(num int) string {
+	var emojis string = ""
+	for i := 0; i < num; i++ {
+		rand.Seed(time.Now().UnixNano())
+		emojiNumber := strconv.Itoa((rand.Intn(64)) + 128640)
+		emojis += html.UnescapeString("&#" + emojiNumber + ";")
+	}
+	return emojis
 }
 
 // dictionaries
