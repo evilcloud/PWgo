@@ -59,19 +59,22 @@ func generatePassword() string {
 func insertRandomNumChar(data []string) []string {
 	numeral := pickRandomWord(strings.Split("1 2 3 4 5 6 7 8 9", " "))
 	char := pickRandomWord(strings.Split("! @ # $ % & * - + = ?", " "))
-	// lenData := len(data)
-	// var numPosition, charPosition int
 
-	// if config.RandomPlacing {
-	// 	numPosition := pickNumberRange(lenData)
-	// 	charPosition := pickNumberRange(lenData + 1)
-	// } else {
-	// 	numPosition := lenData
-	// 	charPosition := lenData + 1
-	// }
-	data = append(data, []string{numeral}...)
-	data = append(data, []string{char}...)
+	if config.randomPlacing {
+		data = insertIntoPosition(data, numeral)
+		data = insertIntoPosition(data, char)
+	} else {
+		data = append(data, []string{numeral}...)
+		data = append(data, []string{char}...)
+	}
 	return data
+}
+
+// Inject a string into a random position in array
+func insertIntoPosition(data []string, insertion string) []string {
+	position := pickNumberRange(len(data))
+	d := append(data[:position], []string{insertion}...)
+	return append(d, data[position+1:]...)
 }
 
 // Returns predetermined number of random emojis
@@ -85,12 +88,13 @@ func getEmojis(num int) string {
 	return emojis
 }
 
-// general functions
+// Picks a random number from provided numbers
 func pickNumberRange(num int) int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(num)
 }
 
+// Picks a random item from provided string array
 func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().UnixNano())
 	return strings.Title(data[rand.Intn(len(data))])

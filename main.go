@@ -30,7 +30,7 @@ type credentials struct {
 
 type settings struct {
 	passLength    int
-	RandomPlacing bool
+	randomPlacing bool
 	loadDict      bool
 	devVersion    bool
 	profanity     struct {
@@ -110,19 +110,6 @@ func setMenuState() {
 	menuet.App().MenuChanged()
 }
 
-func submenuAdditionalSecurity() menuet.MenuItem {
-	return item{
-		Text: "Number and special char randomly placed",
-		Clicked: func() {
-			if config.RandomPlacing {
-				config.RandomPlacing = false
-			} else {
-				config.RandomPlacing = true
-			}
-		},
-		State: config.RandomPlacing}
-}
-
 func openFile(fileName string) []string {
 	ex, err := os.Executable()
 	isError(err)
@@ -183,32 +170,3 @@ func humaniseDuration(start time.Time) string {
 	}
 	return ret
 }
-
-// Persistent state
-
-// Load previous state
-func getDefaults() {
-	clickedCreds.uname.value = menuet.Defaults().String("uname.value")
-	clickedCreds.pass.value = menuet.Defaults().String("pass.value")
-	config.passLength = menuet.Defaults().Integer("passLength")
-}
-
-// Save the state
-func setDefaults() {
-	menuet.Defaults().SetInteger("passLength", config.passLength)
-	menuet.Defaults().SetString("uname.value", clickedCreds.uname.value)
-	menuet.Defaults().SetString("pass.value", clickedCreds.pass.value)
-}
-
-// func (a *settings) update() {
-// 	if a.passLength < passShort {
-// 		a.passLength = passStandard
-// 	}
-
-// 	menuet.Defaults().SetInteger("passLength", a.passLength)
-// }
-
-// func (a *credentials) update() {
-// 	menuet.Defaults().SetString("uname.value", a.uname.value)
-// 	menuet.Defaults().SetString("pass.value", a.pass.value)
-// }
