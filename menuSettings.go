@@ -27,9 +27,9 @@ func submenuSettings() item {
 				subSubLengthItem(passStandard),
 				subSubLengthItem(passLong),
 				item{},
-				// {Text: "Additional security"},
-				// submenuAdditionalSecurity(),
-				// item{},
+				{Text: "Additional security"},
+				submenuAdditionalSecurity(),
+				item{},
 				item{Text: "Level of profanity"},
 				nsfwItem(),
 				sailorItem(),
@@ -37,6 +37,19 @@ func submenuSettings() item {
 			}
 		},
 	}
+}
+
+func submenuAdditionalSecurity() menuet.MenuItem {
+	return item{
+		Text: "Number and special char randomly placed",
+		Clicked: func() {
+			if config.randomPlacing {
+				config.randomPlacing = false
+			} else {
+				config.randomPlacing = true
+			}
+		},
+		State: config.randomPlacing}
 }
 
 func sailorItem() menuet.MenuItem {
