@@ -1,13 +1,13 @@
 ![](assets/icon.png) 
 
-# Password machine ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/evilcloud/PWgo?style=for-the-badge)
+# Password machine ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/evilcloud/PWgo?style=for-the-badge) [download](https://github.com/evilcloud/PWgo/releases/download/1.1.1/PWgo.1.1.1.dmg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/evilcloud/PWgo)
 [![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo) ![GitHub last commit](https://img.shields.io/github/last-commit/evilcloud/PWgo)
 
 
 
 
-[dowonload](https://api.github.com/repos/evilcloud/PWgo/releases/latest)
+
 
 #### Go implementation of PW pass generator
 
