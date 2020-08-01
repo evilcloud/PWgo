@@ -41,11 +41,12 @@ func generatePassword() string {
 
 	var pass []string
 	totalDict := append(adjectives, nouns...)
-	for i := 1; i < 1000; i++ {
+	for i := 1; i < 5000; i++ {
 		pass = append([]string{pickRandomWord(totalDict)}, pass...)
 		lenPassAlpha := len(strings.Join(pass, "")) - 2
 		if lenPassAlpha == config.passLength {
 			pass := insertRandomNumChar(pass)
+			debugNotification(strings.Join(pass, ""))
 			return strings.Join(pass, "")
 		} else if lenPassAlpha > config.passLength {
 			pass = nil
@@ -97,5 +98,5 @@ func pickNumberRange(num int) int {
 // Picks a random item from provided string array
 func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().UnixNano())
-	return strings.Title(data[rand.Intn(len(data))])
+	return strings.Trim(strings.Title(data[rand.Intn(len(data))]), "\n")
 }
