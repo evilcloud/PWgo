@@ -1,6 +1,6 @@
 ![](assets/icon.png)
 
-# Password machine (v.1.1)
+# Password machine (v.1.1.1)
 [![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo)
 
 
@@ -63,12 +63,12 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 ### Settings
 
 1. **Length** defines the length of the password
-2. ~~**Additional security** will place the number and special charachter randomly between words in the password, instead of placing them at the end. Arguably this is somewhat safer, but I personally see no huge upside.~~
+2. **Additional security** will place the number and special charachter randomly between words in the password, instead of placing them at the end. Arguably this is somewhat safer, but I personally see no huge upside.
 3. **NSFW** adds a dictionary of insults and offensive words to the existing dictionary. Theoretically this strengthens the password strength by adding into the pool of predetermined words, but some of the terms truly shouldn't be there. Use at your own risk, or better don't use at all.
 4. **Sailor-redneck mode** weakest, most immature mode of username and password generation -- this option removes adjectives and nouns dictionaries and leaves only profanities. Done purely for novelty purposes. Not advisable to use at all. Ever.
 
 ## What's next?
 
-_Nothing_. The app in its current form has appeared as a port, and later improvement of its original Python version. I guess there will be some minor updates, but essentially the app will be rewritten in Swift or Objective-C some time soon. Go is beautiful, but it has its limitations with these type of applications.
+~~_Nothing_. The app in its current form has appeared as a port, and later improvement of its original Python version. I guess there will be some minor updates, but essentially the app will be rewritten in Swift or Objective-C some time soon. Go is beautiful, but it has its limitations with these type of applications.~~
 
 Currently the app is very stable, so mostly the updates will fall in either "optimisation" or "additional features" camps.
