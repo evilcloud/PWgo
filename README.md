@@ -72,5 +72,3 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 _Nothing_. The app in its current form has appeared as a port, and later improvement of its original Python version. I guess there will be some minor updates, but essentially the app will be rewritten in Swift or Objective-C some time soon. Go is beautiful, but it has its limitations with these type of applications.
 
 Currently the app is very stable, so mostly the updates will fall in either "optimisation" or "additional features" camps.
-
-![](assets/background.jpg)
