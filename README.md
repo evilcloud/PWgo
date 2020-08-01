@@ -1,7 +1,9 @@
 ![](assets/icon.png) 
 
 # Password machine ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/evilcloud/PWgo?style=for-the-badge)
-[![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo)
+![GitHub Release Date](https://img.shields.io/github/release-date/evilcloud/PWgo)
+[![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo) ![GitHub last commit](https://img.shields.io/github/last-commit/evilcloud/PWgo)
+
 
 
 
