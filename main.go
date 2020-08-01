@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/caseymrm/menuet"
-	"github.com/dustin/go-humanize"
 )
 
 // TODO: Externalise all strings
@@ -124,8 +123,8 @@ func openFile(fileName string) []string {
 // Adds to Version string the time of compile and trues config.devVersion if version is not changed by idflags
 func isDevVersion() {
 	if Version == devVersionString {
-		t := time.Now()
-		Version += t.String()
+		// t := time.Now()
+		Version += executableLastMod()
 		config.devVersion = true
 	}
 }
@@ -160,13 +159,4 @@ func checkDictionaries() {
 			}
 		}
 	}
-}
-
-func humaniseDuration(start time.Time) string {
-	ret := humanize.Time(start)
-	debugNotification(ret)
-	if ret == "a long while ago" {
-		ret = ""
-	}
-	return ret
 }

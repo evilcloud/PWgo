@@ -66,7 +66,7 @@ func menuDisplayCredential(details, mode string) item {
 
 func passwordMachineText() string {
 	if !config.devVersion {
-		return "Password machine\t" + Version
+		return "Password machine"
 	}
-	return "Password machine\t" + getEmojis(2)
+	return "Password machine\t" + executableLastMod()
 }
