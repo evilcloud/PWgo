@@ -9,13 +9,13 @@
 
 ## What is it?
 
-This is a password generator, based somewhat on principles of xkcd password strength comic
+It's a password generator, based somewhat on principles of xkcd password strength comic
 
 ![](README_assets/password_strength.png)
 
-The original comic is [here](https://xkcd.com/936/)
+The original comic can be found [here](https://xkcd.com/936/)
 
-It generates passwords, usernames, and for fun, two word combos, that _may or may not_ [mean something](https://www.sciencedirect.com/science/article/abs/pii/S0010945208001391).
+Password Machine generates passwords, usernames, and two word combos, that _may or may not_ [mean something](https://www.sciencedirect.com/science/article/abs/pii/S0010945208001391).
 
 This was a personal project, later filled with features requested by a close person. In my view this is by far the best password generator I have personally seen. Why? Because once in a while we are forced to enter the passwords manually, despite our password managers placing them into the clipboard, and when this starts, I get extremely annoyed to constantly shift attention between my password manager and the input field, grabbing only couple of random alphanumeric characters at a time. Here once or two views is sufficient to retype a 40 charachter long string. All this without sacrifising the safety.
 
@@ -85,3 +85,15 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 ~~_Nothing_. The app in its current form has appeared as a port, and later improvement of its original Python version. I guess there will be some minor updates, but essentially the app will be rewritten in Swift or Objective-C some time soon. Go is beautiful, but it has its limitations with these type of applications.~~
 
 Currently the app is very stable, so mostly the updates will fall in either "optimisation" or "additional features" camps.
+
+## References
+
+xkcd, *Password Strength*, `https://xkcd.com/936/`
+
+FYFE, S., WILLIAMS, C., MASON, O. and PICKUP, G., 2008. *Apophenia, theory of mind and schizotypy: Perceiving meaning and intentionality in randomness.* Cortex, 44(10), pp.1316-1325. `https://www.sciencedirect.com/science/article/abs/pii/S0010945208001391`
+
+Weber, J., 2020. *Password Strength/Entropy: Characters Vs. Words.* Weberblog.net. `https://weberblog.net/password-strengthentropy-characters-vs-words/`
+
+hugsy, *english-adjectives.txt*`https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913`
+
+Desi Quintans, *The Great Noun List*, `http://www.desiquintans.com/nounlist`
