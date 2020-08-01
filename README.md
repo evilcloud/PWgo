@@ -7,6 +7,8 @@
 
 
 
+[dowonload](https://api.github.com/repos/evilcloud/PWgo/releases/latest)
+
 #### Go implementation of PW pass generator
 
 ## What is it?
