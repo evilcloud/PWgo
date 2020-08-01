@@ -1,21 +1,17 @@
-![](assets/icon.png) 
+![](README_assets/icon.png)
 
-# Password machine ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/evilcloud/PWgo?style=for-the-badge) [download](https://github.com/evilcloud/PWgo/releases/download/1.1.1/PWgo.1.1.1.dmg)
+# Password machine ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/evilcloud/PWgo?style=for-the-badge)
+
 ![GitHub Release Date](https://img.shields.io/github/release-date/evilcloud/PWgo)
 [![Build Status](https://travis-ci.org/evilcloud/PWgo.svg?branch=master)](https://travis-ci.org/evilcloud/PWgo) ![GitHub last commit](https://img.shields.io/github/last-commit/evilcloud/PWgo)
 
-
-
-
-
-
-#### Go implementation of PW pass generator
+#### A random words pass generator
 
 ## What is it?
 
 This is a password generator, based somewhat on principles of xkcd password strength comic
 
-![](assets/password_strength.png)
+![](README_assets/password_strength.png)
 
 The original comic is [here](https://xkcd.com/936/)
 
@@ -53,7 +49,7 @@ All items mentioned above can be copied into the clipboard when clicked on. When
 
 The app is written in pure Go. Compiled and tested on macOS. I assume it can be compiled and run on Windows and Linux as well, but I haven't tried.
 
-![](assets/Screenshot.png)
+![](README_assets/Screenshot.png)
 
 ### Last copy-clicked
 
@@ -71,6 +67,8 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 2. **Additional security** will place the number and special charachter randomly between words in the password, instead of placing them at the end. Arguably this is somewhat safer, but I personally see no huge upside.
 3. **NSFW** adds a dictionary of insults and offensive words to the existing dictionary. Theoretically this strengthens the password strength by adding into the pool of predetermined words, but some of the terms truly shouldn't be there. Use at your own risk, or better don't use at all.
 4. **Sailor-redneck mode** weakest, most immature mode of username and password generation -- this option removes adjectives and nouns dictionaries and leaves only profanities. Done purely for novelty purposes. Not advisable to use at all. Ever.
+
+[![](README_assets/download.gif)](https://github.com/evilcloud/PWgo/releases/download/1.1.1/PWgo.1.1.1.dmg)
 
 ## What's next?
 
