@@ -19,6 +19,16 @@ It generates passwords, usernames, and for fun, two word combos, that _may or ma
 
 This was a personal project, later filled with features requested by a close person. In my view this is by far the best password generator I have personally seen. Why? Because once in a while we are forced to enter the passwords manually, despite our password managers placing them into the clipboard, and when this starts, I get extremely annoyed to constantly shift attention between my password manager and the input field, grabbing only couple of random alphanumeric characters at a time. Here once or two views is sufficient to retype a 40 charachter long string. All this without sacrifising the safety.
 
+## So, `2fC*H)(y"qhB2]n:` was a stupid idea then?
+
+Not necessarily. With all due respect to xkcd, but he's got his math wrong. [This](https://weberblog.net/password-strengthentropy-characters-vs-words/) article is talking in details on how random characters is not the same as the random word -- in short, you can fit only so many words into a string of specific length, and the redundancy (English language holds someting like 60% -- see Shannon, Weiner) will play against entropy. This does not mean, however, that you should go back to gibberish -- just make your strings longer. My standard password is 40 characters long, and it usually includes only one numeral and one special character.
+
+> You should not generate your passphrases yourself nor should you choose “easy” passphrases out of randomly generated ones!
+
+— [Weber, _Password Strength/Entropy: Characters vs. Words_](https://weberblog.net/password-strengthentropy-characters-vs-words/)
+
+I would advise against using these type of passwords for the strings shorter than 10 characters, or for critical items.
+
 ### So, I don't need a password manager then?
 
 It's 2020 and anyone who is not making a full use of password manager right now may as well post their SSN and credit card number on 4chan. Of course you need a password manager, but you also can't reuse the passwords. This is why you need a password generator. Making the passwords yourself will only make you repeat the same guessable strings of data.
