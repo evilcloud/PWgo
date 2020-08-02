@@ -4,7 +4,7 @@ import sys
 import time
 
 
-def load_settings():
+def load_settings() -> dict:
     f = open("dclean.json")
     settings = json.load(f)
     f.close()
@@ -15,7 +15,7 @@ def is_dir(dir: str) -> bool:
     return os.path.isdir(dir)
 
 
-def is_file(directory, filename: str) -> bool:
+def is_file(directory: str, filename: str) -> bool:
     return os.path.isfile(os.path.join(directory, filename))
 
 
@@ -24,16 +24,16 @@ def confirm_or_exit(message: str = "") -> bool:
     return input("[ENTER] to continue, [n] to quit: ") == ""
 
 
-def get_all_txt(directory) -> list:
+def get_all_txt(directory: str) -> list:
     return [txtfile for txtfile in os.listdir(directory) if txtfile.endswith(".txt")]
 
 
-def vertical_print(files: list):
+def vertical_print(files: list) -> None:
     for name in files:
         print(f"\t{name}")
 
 
-def find_directory(args: list):
+def find_directory(args: list) -> (list, str):
     pfiles = []
     directory = ""
     for item in args:
@@ -44,14 +44,14 @@ def find_directory(args: list):
     return pfiles, directory
 
 
-def clean_content(content):
+def clean_content(content: list) -> str:
     new_content = ""
     for entry in content:
         new_content += entry.strip() + "\n"
     return new_content
 
 
-def get_from_file(filepath) -> list:
+def get_from_file(filepath: str) -> list:
     """ returns the content of the file """
     with open(filepath, "r") as f:
         content = f.readlines()
