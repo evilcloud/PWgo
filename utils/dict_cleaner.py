@@ -1,10 +1,9 @@
 import os
 import re
+import sys
 
 
-directory = "data/"
-files = ["adjectives.txt", "nouns.txt"]
-alphanum = re.compile(r'')
+
 
 def get_from_file(filepath: str) -> list:
     """ returns the content of the file """
@@ -13,10 +12,22 @@ def get_from_file(filepath: str) -> list:
     return content
 
 
+
 def main():
+    directory = "data/"
+    files = ["adjectives.txt", "nouns.txt"]
+    # alphanum = re.compile(r'')
+
+    args = sys.argv
+    if len(args) > 1:
+        f = args[1]
+        if os.path.isdir(f):
+            directory = f
+    filepath = os.path.join(directory)
+    print(f"Target directory {filepath}")
+    sys.exit(0)
+    
     for file in files:
-        filepath = os.path.join(directory, file)
-        
         content = get_from_file(filepath)
         print(f"Loaded {len(content)} entries from {file}")
         
