@@ -21,7 +21,7 @@ This was a personal project, later filled with features requested by a close per
 
 ## So, `2fC*H)(y"qhB2]n:` was a stupid idea then?
 
-Not necessarily. With all due respect to xkcd, but he's got his math wrong. [This](https://weberblog.net/password-strengthentropy-characters-vs-words/) article is talking in details on how random characters is not the same as the random word -- in short, you can fit only so many words into a string of specific length, and the redundancy (English language holds someting like 60% -- see Shannon) will play against entropy. This does not mean, however, that you should go back to gibberish -- just make your strings longer. My standard password is 40 characters long, and it usually includes only one numeral and one special character.
+Not necessarily. With all due respect to xkcd, but he's got his math wrong. [This](https://weberblog.net/password-strengthentropy-characters-vs-words/) article is talking in details on how random characters is not the same as the random word -- in short, you can fit only so many words into a string of specific length, and the redundancy (English language holds someting like 40% -- see Shannon) will play against entropy. This does not mean, however, that you should go back to gibberish -- just make your strings longer. My standard password is 40 characters long, and it usually includes only one numeral and one special character.
 
 > You should not generate your passphrases yourself nor should you choose “easy” passphrases out of randomly generated ones!
 
@@ -82,7 +82,7 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 3. **NSFW** adds a dictionary of insults and offensive words to the existing dictionary. Theoretically this strengthens the password strength by adding into the pool of predetermined words, but some of the terms truly shouldn't be there. Use at your own risk, or better don't use at all.
 4. **Sailor-redneck mode** weakest, most immature mode of username and password generation -- this option removes adjectives and nouns dictionaries and leaves only profanities. Done purely for novelty purposes. Not advisable to use at all. Ever.
 
-[![](README_assets/download.gif)](https://github.com/evilcloud/PWgo/releases/download/1.1.1/PWgo.1.1.1.dmg)
+[![](README_assets/download.gif)](https://github.com/evilcloud/PWgo/releases/download/1.1.2/PWgo.1.2.1.dmg)
 
 ## What's next?
 
