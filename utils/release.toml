@@ -1,0 +1,31 @@
+title = "Release tool"
+
+[assets]
+dictionaries = [
+        "adjectives.txt",
+        "nouns.txt",
+        "bad.txt"
+    ]
+executable = "PWgo"
+plist = "info.plist"
+iconset = "icon.icn"
+
+[source]
+    [source.dict]
+    directory = "../data/"
+
+    [executable]
+    directory = "../"
+
+[dictionaries]
+    source = "../data"
+    target = "MacOS/data"
+    files = [
+        "adjectives.txt",
+        "nouns.txt",
+        "bad.txt"
+    ]
+
+[iconset]
+    source = "../assets"
+    tartet = ""
