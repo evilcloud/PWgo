@@ -21,7 +21,7 @@ This was a personal project, later filled with features requested by a close per
 
 ## So, `2fC*H)(y"qhB2]n:` was a stupid idea then?
 
-Not necessarily. With all due respect to xkcd, but he's got his math wrong. [This](https://weberblog.net/password-strengthentropy-characters-vs-words/) article is talking in details on how random characters is not the same as the random word -- in short, you can fit only so many words into a string of specific length, and the redundancy (English language holds someting like 60% -- see Shannon, Weiner) will play against entropy. This does not mean, however, that you should go back to gibberish -- just make your strings longer. My standard password is 40 characters long, and it usually includes only one numeral and one special character.
+Not necessarily. With all due respect to xkcd, but he's got his math wrong. [This](https://weberblog.net/password-strengthentropy-characters-vs-words/) article is talking in details on how random characters is not the same as the random word -- in short, you can fit only so many words into a string of specific length, and the redundancy (English language holds someting like 60% -- see Shannon) will play against entropy. This does not mean, however, that you should go back to gibberish -- just make your strings longer. My standard password is 40 characters long, and it usually includes only one numeral and one special character.
 
 > You should not generate your passphrases yourself nor should you choose “easy” passphrases out of randomly generated ones!
 
@@ -29,7 +29,7 @@ Not necessarily. With all due respect to xkcd, but he's got his math wrong. [Thi
 
 I would advise against using these type of passwords for the strings shorter than 10 characters, or for critical items.
 
-### So, I don't need a password manager then?
+### So, I need a password manager then?
 
 It's 2020 and anyone who is not making a full use of password manager right now may as well post their SSN and credit card number on 4chan. Of course you need a password manager, but you also can't reuse the passwords. This is why you need a password generator. Making the passwords yourself will only make you repeat the same guessable strings of data.
 
@@ -39,22 +39,22 @@ Of course password managers offer password generators, but I personally find the
 
 The app uses three dictionaries:
 
-_the source has been updated to the massive dictionary compiled by Ashley Bovan_
+_the dictionaries have been updated to the massive compilation by Ashley Bovan_
 
-**Adjectives**: English language adjectives -- 28'000 words
+**Adjectives**: 28'000
 ~~is a 1347 words long list of English language adjectives. Taken from [hugsy](https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913)~~
 
-**Nouns** English language nouns -- 91'000 words
+**Nouns**: 91'000
 ~~is a 1525 entries strong list of English language nouns. Taken from [The Great Noun List](http://www.desiquintans.com/nounlist)~~
 
-**Profanities** is a 2146 entries long list of profanities, heavily edited -- I have tried as much as I could to remove prejudices and leave only insults. Many have slipped though and stayed. The list is in the state of cleaning. In any case, I advise against using profanities option.
+**Profanities** is a 2146 entries long list of profanities, heavily edited -- I have tried as much as I could to remove prejudices and leave only insults. Many have slipped though and stayed. The list is in the state of cleaning. At any rate, I advise against using this option.
 
 ## How to use it
 
 The app sits in the menubar and once the icon is clicked, it will generate the following data:
 
 1. Username -- consists of a merged adjective and a noun. All spaces and punctuation are omitted. Words are capitalised and then concatenated
-2. Password -- consists of capitalised words strung together, followed by one random numeral (except 0, to avoid confusion with the O) and one random special character (from a limited choice of easily acessable ones)
+2. Password -- consists of capitalised words strung together, followed by one random numeral (except 0, to avoid confusion with the O) and one random special character (from a limited choice of easily accessible ones)
 3. Words of Wisdom -- just a fun experiment where a random adjective and noun are juxtaposed
 
 Password is automatically added to the clipboard once the menu is activated. Just click and use Ctr-V
@@ -103,3 +103,5 @@ hugsy, _english-adjectives.txt_`https://gist.github.com/hugsy/8910dc78d208e40de4
 Desi Quintans, _The Great Noun List_, `http://www.desiquintans.com/nounlist`
 
 Ashley Bovan, _Parts of Speech_, `http://www.ashley-bovan.co.uk/words/partsofspeech.html`
+
+Claud E. Shannon, _The Redundancy of English_, `https*://www.uni-due.de/~bj0063/doc/shannon_redundancy.pdf`
