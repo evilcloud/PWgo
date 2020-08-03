@@ -37,20 +37,24 @@ func generatePassword() string {
 	// FIXME: put the check in the init part of the code
 	if config.passLength < passShort {
 		config.passLength = passStandard
+		debugNotification("passLength changed to " + strconv.Itoa(config.passLength))
 	}
 
 	var pass []string
 	totalDict := append(adjectives, nouns...)
-	for i := 1; i < 1000; i++ {
+	for i := 1; i < 5000; i++ {
 		pass = append([]string{pickRandomWord(totalDict)}, pass...)
-		lenPassAlpha := len(strings.Join(pass, "")) - 2
+		lenPassAlpha := len(strings.Join(pass, "")) + 2
 		if lenPassAlpha == config.passLength {
 			pass := insertRandomNumChar(pass)
 			return strings.Join(pass, "")
-		} else if lenPassAlpha > config.passLength {
+		}
+		if lenPassAlpha > config.passLength {
+			debugNotification("pass length reset " + strings.Join(pass, "") + " " + strconv.Itoa(len(strings.Join(pass, "_"))))
 			pass = nil
 		}
 	}
+	debugNotification("pass legth failed")
 	popupMessage("Password failure", "Failed to match pass to length!")
 	return "Failed to match pass to length"
 }
@@ -72,9 +76,17 @@ func insertRandomNumChar(data []string) []string {
 
 // Inject a string into a random position in array
 func insertIntoPosition(data []string, insertion string) []string {
-	position := pickNumberRange(len(data))
-	d := append(data[:position], []string{insertion}...)
-	return append(d, data[position+1:]...)
+	// I am really sorry for this loop. I have not figured out why slice concatenation doesn't work
+	var newData []string
+	dataLength := len(data)
+	position := pickNumberRange(dataLength)
+	for i, entry := range data {
+		if i == position {
+			newData = append(newData, []string{insertion}...)
+		}
+		newData = append(newData, entry)
+	}
+	return newData
 }
 
 // Returns predetermined number of random emojis
@@ -97,5 +109,5 @@ func pickNumberRange(num int) int {
 // Picks a random item from provided string array
 func pickRandomWord(data []string) string {
 	rand.Seed(time.Now().UnixNano())
-	return strings.Title(data[rand.Intn(len(data))])
+	return strings.Trim(strings.Title(data[rand.Intn(len(data))]), "\n")
 }
