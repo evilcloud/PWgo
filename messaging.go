@@ -18,10 +18,10 @@ func isError(err error) {
 func debugNotification(text string) {
 	if config.devVersion {
 		log.Println(text)
-		menuet.App().Notification(menuet.Notification{
-			Title:   "Debug notification",
-			Message: text,
-		})
+		// menuet.App().Notification(menuet.Notification{
+		// 	Title:   "Debug notification",
+		// 	Message: text,
+		// })
 	}
 }
 

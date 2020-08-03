@@ -30,7 +30,7 @@ func menuItems() []item {
 		item{},
 		item{Text: "Username"},
 		menuDisplayCredential(currCreds.uname.value, "username"),
-		item{Text: "Password (" + strconv.Itoa(config.passLength) + " characters)"},
+		item{Text: "Password (" + strconv.Itoa(len(currCreds.pass.value)) + " characters)"},
 		menuDisplayCredential(currCreds.pass.value, "password"),
 		spacer,
 		submenuLastItemClicked(),
