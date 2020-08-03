@@ -129,6 +129,7 @@ func isDevVersion() {
 	}
 }
 
+//testing
 // dictionaries
 func checkDictionaries() {
 	if config.loadDict == false {
