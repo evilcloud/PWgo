@@ -39,9 +39,13 @@ Of course password managers offer password generators, but I personally find the
 
 The app uses three dictionaries:
 
-**Adjectives**: is a 1347 words long list of English language adjectives. Taken from [hugsy](https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913)
+_the source has been updated to the massive dictionary compiled by Ashley Bovan_
 
-**Nouns** is a 1525 entries strong list of English language nouns. Taken from [The Great Noun List](http://www.desiquintans.com/nounlist)
+**Adjectives**: English language adjectives -- 28'000 words
+~~is a 1347 words long list of English language adjectives. Taken from [hugsy](https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913)~~
+
+**Nouns** English language nouns -- 91'000 words
+~~is a 1525 entries strong list of English language nouns. Taken from [The Great Noun List](http://www.desiquintans.com/nounlist)~~
 
 **Profanities** is a 2146 entries long list of profanities, heavily edited -- I have tried as much as I could to remove prejudices and leave only insults. Many have slipped though and stayed. The list is in the state of cleaning. In any case, I advise against using profanities option.
 
@@ -88,12 +92,14 @@ Currently the app is very stable, so mostly the updates will fall in either "opt
 
 ## References
 
-xkcd, *Password Strength*, `https://xkcd.com/936/`
+xkcd, _Password Strength_, `https://xkcd.com/936/`
 
-FYFE, S., WILLIAMS, C., MASON, O. and PICKUP, G., 2008. *Apophenia, theory of mind and schizotypy: Perceiving meaning and intentionality in randomness.* Cortex, 44(10), pp.1316-1325. `https://www.sciencedirect.com/science/article/abs/pii/S0010945208001391`
+FYFE, S., WILLIAMS, C., MASON, O. and PICKUP, G., 2008. _Apophenia, theory of mind and schizotypy: Perceiving meaning and intentionality in randomness._ Cortex, 44(10), pp.1316-1325. `https://www.sciencedirect.com/science/article/abs/pii/S0010945208001391`
 
-Weber, J., 2020. *Password Strength/Entropy: Characters Vs. Words.* Weberblog.net. `https://weberblog.net/password-strengthentropy-characters-vs-words/`
+Weber, J., 2020. _Password Strength/Entropy: Characters Vs. Words._ Weberblog.net. `https://weberblog.net/password-strengthentropy-characters-vs-words/`
 
-hugsy, *english-adjectives.txt*`https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913`
+hugsy, _english-adjectives.txt_`https://gist.github.com/hugsy/8910dc78d208e40de42deb29e62df913`
 
-Desi Quintans, *The Great Noun List*, `http://www.desiquintans.com/nounlist`
+Desi Quintans, _The Great Noun List_, `http://www.desiquintans.com/nounlist`
+
+Ashley Bovan, _Parts of Speech_, `http://www.ashley-bovan.co.uk/words/partsofspeech.html`

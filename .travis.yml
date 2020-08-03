@@ -1,12 +1,10 @@
 # .travis.yml
-matrix:
-  include:
+include:
   - language: go
+
   os: osx
+
   sudo: false
+
   go:
   - '1.14'
-
-language: python
-  python:
-  - '3.7'
