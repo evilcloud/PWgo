@@ -11,8 +11,8 @@ def load_settings() -> dict:
     return settings
 
 
-def is_dir(dir: str) -> bool:
-    return os.path.isdir(dir)
+def is_dir(directory: str) -> bool:
+    return os.path.isdir(directory)
 
 
 def is_file(directory: str, filename: str) -> bool:
