@@ -2,6 +2,7 @@ package main
 
 import (
 	"html"
+	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -50,7 +51,6 @@ func generatePassword() string {
 			return strings.Join(pass, "")
 		}
 		if lenPassAlpha > config.passLength {
-			debugNotification("pass length reset " + strings.Join(pass, "") + " " + strconv.Itoa(len(strings.Join(pass, "_"))))
 			pass = nil
 		}
 	}
@@ -79,12 +79,19 @@ func insertIntoPosition(data []string, insertion string) []string {
 	// I am really sorry for this loop. I have not figured out why slice concatenation doesn't work
 	var newData []string
 	dataLength := len(data)
-	position := pickNumberRange(dataLength)
-	for i, entry := range data {
-		if i == position {
-			newData = append(newData, []string{insertion}...)
+	position := pickNumberRange(dataLength + 1)
+	log.Printf("insertion: %s dataLength: %d, position: %d\n\n", insertion, dataLength, position)
+	if position == dataLength {
+		newData = append(data, []string{insertion}...)
+		log.Println("end")
+	} else {
+		log.Println("not end")
+		for i, entry := range data {
+			if i == position {
+				newData = append(newData, []string{insertion}...)
+			}
+			newData = append(newData, entry)
 		}
-		newData = append(newData, entry)
 	}
 	return newData
 }

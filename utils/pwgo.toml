@@ -1,4 +1,4 @@
-[DEFAULT]
+[app]
 name = "Password machine"
 directory = "../"
 target = "../DMG/"
