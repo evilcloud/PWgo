@@ -82,7 +82,7 @@ A fun juxtaposition of an adjective and noun. Can be copied into clipboard, but 
 3. **NSFW** adds a dictionary of insults and offensive words to the existing dictionary. Theoretically this strengthens the password strength by adding into the pool of predetermined words, but some of the terms truly shouldn't be there. Use at your own risk, or better don't use at all.
 4. **Sailor-redneck mode** weakest, most immature mode of username and password generation -- this option removes adjectives and nouns dictionaries and leaves only profanities. Done purely for novelty purposes. Not advisable to use at all. Ever.
 
-[![](README_assets/download.gif)](https://github.com/evilcloud/PWgo/releases/download/1.1.2/PWgo.1.2.1.dmg)
+[![](README_assets/download.gif)](https://api.github.com/repos/evilcloud/PWgo/releases/latest)
 
 ## What's next?
 
