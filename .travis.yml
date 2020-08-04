@@ -1,10 +1,8 @@
 # .travis.yml
-include:
-  - language: go
+language: go
 
-  os: osx
+sudo: false
 
-  sudo: false
-
-  go:
+go:
   - '1.14'
+  - tip
