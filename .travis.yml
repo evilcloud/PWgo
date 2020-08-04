@@ -1,6 +1,8 @@
 # .travis.yml
 language: go
 
+os: osx
+
 sudo: false
 
 go:
