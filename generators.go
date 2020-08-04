@@ -2,7 +2,6 @@ package main
 
 import (
 	"html"
-	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -80,12 +79,9 @@ func insertIntoPosition(data []string, insertion string) []string {
 	var newData []string
 	dataLength := len(data)
 	position := pickNumberRange(dataLength + 1)
-	log.Printf("insertion: %s dataLength: %d, position: %d\n\n", insertion, dataLength, position)
 	if position == dataLength {
 		newData = append(data, []string{insertion}...)
-		log.Println("end")
 	} else {
-		log.Println("not end")
 		for i, entry := range data {
 			if i == position {
 				newData = append(newData, []string{insertion}...)
