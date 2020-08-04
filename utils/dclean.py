@@ -47,7 +47,7 @@ def find_directory(args: list) -> (list, str):
 def clean_content(content: list) -> str:
     new_content = ""
     for entry in content:
-        new_content += entry.strip() + "\n"
+        new_content += entry.strip().strip('"') + "\n"
     return new_content
 
 

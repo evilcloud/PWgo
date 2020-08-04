@@ -1,20 +1,34 @@
 [app]
-name = "Password machine"
-source = "../"
-target = "../DMG/"
-root = "Password machine.app/Contents/"
+name = "Password_machine"
+source = ".."
+target = "some"
+execname = "PWgo"
 
 [plist]
-file = "Info.plist"
+files = ["Info.plist"]
 source = "DMG"
 target = ""
 
 [exec]
-file = "PWgo"
+files = ["PWgo"]
 source = "."
 target = "MacOS/"
 
 [resources]
-all = true
+files = [
+    "nsfw.pdf",
+    "pw.pdf",
+    "sailor.pdf",
+    "icon.icns"
+]
 source = "Resources"
-target = "MacOS/Resrouces"
+target = "Resrouces"
+
+[data]
+files = [
+    "adjectives.txt",
+    "nouns.txt",
+    "bad.txt",
+]
+source = "data"
+target = "MacOS/data"
