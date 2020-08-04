@@ -40,9 +40,9 @@ type settings struct {
 }
 
 const (
-	adjFile          = "Resources/adjectives.txt"
-	nounFile         = "Resources/nouns.txt"
-	badFile          = "Resources/bad.txt"
+	adjFile          = "data/adjectives.txt"
+	nounFile         = "data/nouns.txt"
+	badFile          = "data/bad.txt"
 	devVersionString = "development version\t"
 	passShort        = 8
 	passAcceptable   = 12

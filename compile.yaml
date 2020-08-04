@@ -1,0 +1,2 @@
+go build -ldflags="-X 'main.Version=v1.1.22'"
+create-dmg 'Password machine.app' --dmg-title='Password machine'

@@ -18,7 +18,7 @@ func submenuLastItemClicked() menuet.MenuItem {
 				},
 				menuDisplayCredential(clickedCreds.uname.value, "clicked"),
 				item{},
-				item{Text: "Password " + strconv.Itoa(len(clickedCreds.pass.value)) + " characters)"},
+				item{Text: "Password (" + strconv.Itoa(len(clickedCreds.pass.value)) + " characters)"},
 				item{
 					Text:     humaniseDuration(clickedCreds.pass.time),
 					FontSize: 10,

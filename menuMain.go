@@ -22,7 +22,8 @@ func menuItems() []item {
 	return []item{
 		item{
 			Text:       passwordMachineText(),
-			FontWeight: menuet.WeightBlack,
+			FontWeight: menuet.WeightBold,
+			FontSize:   18,
 			Clicked: func() {
 				debugNotification("clicked Title")
 			},
