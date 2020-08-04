@@ -103,6 +103,16 @@ func getEmojis(num int) string {
 	return emojis
 }
 
+func getEmojisSeeded(num int, seed time.Time) string {
+	var emojis string = ""
+	for i := 0; i < num; i++ {
+		rand.Seed(seed.AddDate(i, i, i).UnixNano())
+		emojiNumber := strconv.Itoa((rand.Intn(64)) + 128640)
+		emojis += html.UnescapeString("&#" + emojiNumber + ";")
+	}
+	return emojis
+}
+
 // Picks a random number from provided numbers
 func pickNumberRange(num int) int {
 	rand.Seed(time.Now().UnixNano())

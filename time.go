@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -18,13 +19,19 @@ func humaniseDuration(start time.Time) string {
 }
 
 func executableLastMod() string {
+	return fmt.Sprint(executableLastModTime())
+}
+
+func executableLastModTime() time.Time {
 	filename, err := os.Executable()
 	if err != nil {
-		return "Failed to capture executable info"
+		popupMessage("Error", "Failed to capture executable info")
+		log.Println("Failed to capture executable info")
 	}
 	file, err := os.Stat(filename)
 	if err != nil {
-		return "Failed to capture mod time"
+		popupMessage("Error", "Failed to capture mod time")
+		log.Println("Failed to capture mod time")
 	}
-	return fmt.Sprint(file.ModTime())
+	return file.ModTime()
 }

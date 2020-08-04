@@ -68,5 +68,5 @@ func passwordMachineText() string {
 	if !config.devVersion {
 		return "Password machine"
 	}
-	return "Password machine\t" + executableLastMod()
+	return "Password machine\t" + getEmojisSeeded(2, executableLastModTime())
 }
