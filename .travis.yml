@@ -7,4 +7,3 @@ sudo: false
 
 go:
   - '1.14'
-  - tip
