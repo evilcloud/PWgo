@@ -7,8 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/caseymrm/menuet"
 	t "github.com/evilcloud/PWgo/internal/types"
+
+	"github.com/caseymrm/menuet"
 )
 
 const (
@@ -32,12 +33,12 @@ type generator struct {
 }
 
 // NewGenerator is a generator constructor
-func NewGenerator(config t.Settings, menu *menuet.Application, adjectives, nouns []string) *generator {
+func NewGenerator(config t.Settings, adjectives, nouns []string) *generator {
 	return &generator{
 		nouns:        nouns,
 		adjectives:   adjectives,
 		config:       config,
-		menu:         menu,
+		//menu:         menuet.Application{},
 		specialChars: strings.Split("! @ # $ % & * - + = ?", " "),
 		specialNums:  strings.Split("1 2 3 4 5 6 7 8 9", " "),
 	}

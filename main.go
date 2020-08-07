@@ -33,28 +33,13 @@ const (
 	adjFile  = "data/adjectives.txt"
 	nounFile = "data/nouns.txt"
 	badFile  = "data/bad.txt"
-	// devVersionString = "development version\t"
-	// passShort        = 8
-	// passAcceptable   = 12
-	// passStandard     = 20
-	// passLong         = 40
 )
-
-// var (
-// 	app          menuet.Application
-// 	Version      string = devVersionString
-// 	config       t.Settings
-// 	currCreds    credentials
-// 	clickedCreds credentials
-// 	adjectives   []string
-// 	nouns        []string
-// )
 
 type item = menuet.MenuItem
 
 func main() {
 	isDevVersion()
-	getDefaults()
+	// getDefaults()
 
 	config := t.Settings{}
 	// if config.Profanity.Sfw == config.Profanity.Nsfw == config.Profanity.Sailor == false {
@@ -63,7 +48,7 @@ func main() {
 
 	// config.Info()
 
-	// app := menuet.App()
+	//app := menuet.App()
 	// app.Children = menuItems
 	// app.Name = "Password machine"
 	// app.Label = "com.github.evilcloud.PWgo"
@@ -76,9 +61,9 @@ func main() {
 	dictNouns := openFile(nounFile)
 	dictBad := openFile(badFile)
 
-	sfwGenerator := generators.NewGenerator(config, app, dictNouns, dictAdjectives)
-	nsfwGenerator := generators.NewGenerator(config, app, append(dictNouns, dictBad...), append(dictAdjectives, dictBad...))
-	sailorGenerator := generators.NewGenerator(config, app, dictBad, dictBad)
+	sfwGenerator := generators.NewGenerator(config, dictNouns, dictAdjectives)
+	nsfwGenerator := generators.NewGenerator(config, append(dictNouns, dictBad...), append(dictAdjectives, dictBad...))
+	sailorGenerator := generators.NewGenerator(config, dictBad, dictBad)
 
 	logicApp := a.NewApp(config, sfwGenerator, nsfwGenerator, sailorGenerator)
 

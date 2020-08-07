@@ -3,7 +3,7 @@ package app
 import "github.com/caseymrm/menuet"
 
 // Load previous state
-func getDefaults() {
+func (a *App) getDefaults() {
 	clickedCreds.uname.value = menuet.Defaults().String("uname.value")
 	clickedCreds.pass.value = menuet.Defaults().String("pass.value")
 	config.passLength = menuet.Defaults().Integer("passLength")
@@ -11,7 +11,7 @@ func getDefaults() {
 }
 
 // Save the state
-func setDefaults() {
+func (a *App) setDefaults() {
 	menuet.Defaults().SetInteger("passLength", config.passLength)
 	menuet.Defaults().SetString("uname.value", clickedCreds.uname.value)
 	menuet.Defaults().SetString("pass.value", clickedCreds.pass.value)

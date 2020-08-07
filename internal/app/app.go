@@ -43,7 +43,7 @@ type credentials struct {
 }
 
 type Generator interface {
-	EmojisSeeded(num int, seed time.Time) string
+	//EmojisSeeded(num int, seed time.Time) string
 	Username() string
 	Password() string
 	WoW() string
@@ -80,6 +80,8 @@ func NewApp(config t.Settings, sfwGenerator, nsfwGenerator, sailorGenerator Gene
 		nsfwGenerator:   nsfwGenerator,
 		sailorGenerator: sailorGenerator,
 	}
+
+	a.getDefaults()
 
 	a.menu.Name = "Password machine"
 	a.menu.Label = "com.github.evilcloud.PWgo"
@@ -202,10 +204,8 @@ func (a *App) menuDisplayCredential(details, mode string) item {
 			switch mode {
 			case "username":
 				a.clickedCreds.uname.value = details
-				// clickedCreds.uname.time = time.Now()
 			case "password":
 				a.clickedCreds.pass.value = details
-				// clickedCreds.pass.time = time.Now()
 			}
 			setDefaults()
 			// credentials.update()
@@ -214,8 +214,8 @@ func (a *App) menuDisplayCredential(details, mode string) item {
 }
 
 func (a *App) passwordMachineText() string {
-	if !config.devVersion {
+	if !a.config.DevVersion {
 		return "Password machine"
 	}
-	return "Password machine\t" + getEmojisSeeded(2, executableLastModTime())
+	return "Password machine\t" + a.emojisSeeded(2, executableLastModTime())
 }
